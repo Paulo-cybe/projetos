@@ -1,0 +1,122 @@
+import threading
+import queue
+import socket
+import datetime
+from tqdm import tqdm
+
+# Entrada do usuário
+alvo = input("Digite o IP ou domínio para escanear: ")
+
+try:
+    ip = socket.gethostbyname(alvo)
+except socket.gaierror:
+    print("[✖] Não foi possível resolver o domínio.")
+    exit()
+
+# Cabeçalho bonito
+print("\n╔══════════════════════════════════════╗")
+print("║         🚨 CyberScan v3.5            ║")
+print("╚══════════════════════════════════════╝")
+print(f"Alvo: {alvo} ({ip})")
+print("Portas escaneadas: 1 até 1024")
+inicio = datetime.datetime.now()
+print("Início:", inicio)
+print("════════════════════════════════════════")
+
+# Configurações
+portas_comuns = list(range(1, 1025))
+servicos = {
+    21: "FTP", 22: "SSH", 23: "Telnet", 25: "SMTP", 53: "DNS",
+    80: "HTTP", 110: "POP3", 139: "NetBIOS", 143: "IMAP", 443: "HTTPS",
+    445: "SMB", 3306: "MySQL", 3389: "RDP", 8080: "HTTP-alt"
+}
+alertas = {
+    21: "⚠️ FTP pode permitir ataques se não tiver senha forte.",
+    22: "⚠️ SSH pode sofrer ataques de força bruta.",
+    23: "⚠️ Telnet envia tudo sem criptografia.",
+    80: "⚠️ HTTP não é criptografado.",
+    445: "⚠️ Porta vulnerável a exploits como WannaCry.",
+    3306: "⚠️ Banco de dados exposto!",
+    3389: "⚠️ RDP pode permitir acesso remoto indevido."
+}
+
+# Lock para sincronizar acesso a variáveis compartilhadas
+lock = threading.Lock()
+abertas = 0
+fechadas = 0
+
+# Fila de portas
+q = queue.Queue()
+
+# Worker function
+def worker(target_ip, services_dict, alerts_dict):
+    global abertas, fechadas, pbar
+    while True:
+        porta = q.get()
+        if porta is None:
+            break
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.5)
+        resultado = sock.connect_ex((target_ip, porta))
+        servico = services_dict.get(porta, "Desconhecido")
+        if resultado == 0:
+            with lock:
+                abertas += 1
+            print(f"🟢 Porta {porta} ({servico}) ABERTA")
+            # Banner grabbing
+            try:
+                sock.send(b'HEAD / HTTP/1.0\r\n\r\n')
+                banner = sock.recv(1024).decode().strip()
+                if banner:
+                    print(f"    📡 Banner: {banner.splitlines()[0]}")
+            except:
+                pass
+            # Alerta de risco
+            risco = alerts_dict.get(porta)
+            if risco:
+                print(f"    {risco}")
+        else:
+            with lock:
+                fechadas += 1
+        sock.close()
+        q.task_done()
+        if pbar:
+            with lock:
+                pbar.update(1)
+
+# Inicializa a barra de progresso
+pbar = tqdm(total=len(portas_comuns), desc="🔎 Escaneando portas", unit="porta")
+
+# Enfileira as portas
+for porta in portas_comuns:
+    q.put(porta)
+
+# Cria e inicia as threads
+threads = []
+num_threads = 50
+for _ in range(num_threads):
+    t = threading.Thread(target=worker, args=(ip, servicos, alertas))
+    t.start()
+    threads.append(t)
+
+# Espera as threads finalizarem
+q.join()
+for _ in range(num_threads):
+    q.put(None)
+for t in threads:
+    t.join()
+
+# Fecha a barra de progresso
+if pbar:
+    pbar.close()
+
+# Finaliza
+fim = datetime.datetime.now()
+duracao = fim - inicio
+
+# Rodapé
+print("\n════════════════════════════════════════")
+print(f"🔍 Escaneamento concluído em {duracao}")
+print(f"🟢 Portas abertas: {abertas}")
+print(f"🔴 Portas fechadas: {fechadas}")
+print("════════════════════════════════════════")
