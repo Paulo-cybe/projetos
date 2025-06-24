@@ -1,0 +1,315 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat boy</title>  <!-- CSS externo -->  <link rel="stylesheet" href="styles/style.css" />
+  <style>
+    .intro-container {
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f0c29, #24243e);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+    }
+    .intro-text {
+      font-size: 20px;
+      margin: 20px 0;
+      min-height: 60px;
+    }
+    .loading-bar {
+      width: 300px;
+      height: 4px;
+      background: rgba(76, 201, 240, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #4cc9f0, #f72585);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    .cursor.intro-cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: #4cc9f0;
+      margin-left: 5px;
+      animation: blink-caret 0.75s step-end infinite;
+    }
+    @keyframes blink-caret {
+      from, to { opacity: 0; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="intro" class="intro-container">
+    <h1>chat boy;</h1>
+    <div class="intro-text" id="introText">
+      <span class="cursor intro-cursor"></span>
+    </div>
+    <div class="loading-bar"><div id="introProgress" class="loading-progress"></div></div>
+  </div>
+  <div id="app">
+    <!-- HEADER -->
+    <!-- Tutorial Interativo -->
+<div id="tutorial" class="tutorial hidden">
+  <div class="tutorial-content">
+    <h2 id="tutorial-title"></h2>
+    <p id="tutorial-text"></p><div id="tutorialSimulatedArea" class="tutorial-simulated-area"></div>
+
+<div class="tutorial-buttons">
+  <button id="tutorial-prev" disabled>Voltar</button>
+  <button id="tutorial-next">Próximo</button>
+  <button id="tutorial-start" class="hidden">Começar a explorar</button>
+</div>
+
+  </div>
+</div>
+    <header class="header">
+      <div class="logo">Chat boy</div>
+      <button id="menuBtn" class="menu-btn">⚙️</button>
+    </header><!-- ÁREA DE MENSAGENS -->
+<main id="chatContainer" class="chat-container"></main>
+
+<!-- INPUT -->
+<section class="input-area">
+  <input
+    type="text"
+    id="messageInput"
+    class="message-input"
+    placeholder="Digite sua mensagem..."
+  />
+  <div id="plusOptions" class="plus-options">
+    <button id="fileBtn" title="Anexar arquivo">📎</button>
+    <button id="audioBtn" title="Gravar áudio">🎤</button>
+  </div>
+  <button id="plusBtn" class="plus-btn">+</button>
+  <button id="sendBtn" class="send-btn">➤</button>
+</section>
+
+<!-- SIDEBAR DE CONFIGURAÇÕES -->
+<aside id="sidebar" class="sidebar">
+  <button id="closeSidebarBtn" class="close-btn">← Fechar</button>
+  <h2>Configurações</h2>
+
+  <!-- Visual Geral -->
+  <fieldset>
+    <legend>Visual Geral</legend>
+    <label>
+      <input type="checkbox" id="darkModeToggle" />
+      Modo Noturno
+    </label>
+    <label>
+      Tema:
+      <select id="themePreset">
+        <option value="default">Padrão</option>
+        <option value="vibrant">Vibrante</option>
+        <option value="minimal">Minimalista</option>
+        <option value="solarized">Solarizado</option>
+        <option value="sunset">Pôr do Sol</option>
+      </select>
+    </label>
+    <label>
+      Fundo do Chat:
+      <input type="color" id="backgroundColorPicker" />
+    </label>
+    <label>
+      Imagem de Fundo (URL):
+      <input type="text" id="backgroundImageURL" placeholder="URL da imagem" />
+    </label>
+  </fieldset>
+
+  <!-- Tipografia -->
+  <fieldset>
+    <legend>Tipografia</legend>
+    <label>
+      Fonte das Mensagens:
+      <select id="fontSelector">
+        <option value="Inter">Inter</option>
+        <option value="Courier Prime">Courier Prime</option>
+        <option value="Comic Neue">Comic Neue</option>
+        <option value="Arial">Arial</option>
+        <option value="Times New Roman">Times New Roman</option>
+      </select>
+    </label>
+    <label>
+      Tamanho da Fonte:
+      <input
+        type="range"
+        id="fontSizeSlider"
+        min="12"
+        max="24"
+        value="16"
+      />
+      <span id="fontSizeValue">16px</span>
+    </label>
+    <label>
+      Cor do Texto:
+      <input type="color" id="textColorPicker" />
+    </label>
+  </fieldset>
+
+  <!-- Bolhas de Mensagem -->
+  <fieldset>
+    <legend>Bolhas de Mensagem</legend>
+    <label>
+      Estilo:
+      <select id="messageBubbleStyle">
+        <option value="rounded">Arredondadas</option>
+        <option value="square">Quadradas</option>
+        <option value="shadow">Com Sombra</option>
+        <option value="bordered">Com Borda</option>
+      </select>
+    </label>
+    <label>
+      Cor Usuário:
+      <input type="color" id="userBubbleColor" />
+    </label>
+    <label>
+      Cor Bot:
+      <input type="color" id="botBubbleColor" />
+    </label>
+    <label>
+      Alinhamento:
+      <select id="bubbleAlignment">
+        <option value="left">Esquerda (bot)</option>
+        <option value="right">Direita (usuário)</option>
+      </select>
+    </label>
+  </fieldset>
+
+  <!-- Layout do Chat -->
+  <fieldset>
+    <legend>Layout do Chat</legend>
+    <label>
+      Espaçamento:
+      <select id="chatSpacing">
+        <option value="compact">Compacto</option>
+        <option value="normal" selected>Normal</option>
+        <option value="wide">Espaçado</option>
+      </select>
+    </label>
+    <label>
+      Animações:
+      <input type="checkbox" id="animationsToggle" checked />
+      Ativar
+    </label>
+    <label>
+      Formato do Timestamp:
+      <select id="timestampFormat">
+        <option value="HH:mm">HH:mm</option>
+        <option value="hh:mm a">hh:mm a</option>
+        <option value="DD/MM/YYYY HH:mm">DD/MM/YYYY HH:mm</option>
+      </select>
+    </label>
+  </fieldset>
+
+  <!-- Segurança -->
+  <fieldset>
+    <legend>Segurança</legend>
+    <label>
+      <input type="checkbox" id="secretMessageToggle" />
+      Mensagens Confidenciais (autodestrutivas)
+    </label>
+    <label>
+      Tempo de Autodestruição (segundos):
+      <input
+        type="number"
+        id="selfDestructTimer"
+        min="5"
+        max="3600"
+        value="60"
+      />
+    </label>
+  </fieldset>
+
+  <!-- Histórico -->
+  <fieldset>
+    <legend>Histórico</legend>
+    <label>
+      <input type="checkbox" id="enableHistory" />
+      Salvar Histórico
+    </label>
+    <label>
+      Formato de Exportação:
+      <select id="historyExportFormat">
+        <option value="pdf">PDF</option>
+        <option value="txt">TXT</option>
+        <option value="json">JSON</option>
+      </select>
+    </label>
+    <button id="downloadHistory">Baixar Histórico</button>
+    <div class="history-preview" id="historyPreview"></div>
+  </fieldset>
+
+  <!-- Ações Globais -->
+  <div class="settings-actions">
+    <button id="resetConfig" class="settings-action">Redefinir Padrões</button>
+  </div>
+</aside>
+
+  </div>  <!-- JS externo -->  <script src="scripts/main.js"></script>  <script>
+    const intro = document.getElementById("intro");
+    const introText = document.getElementById("introText");
+    const introProgress = document.getElementById("introProgress");
+    const mensagens = [
+      "ola, Sou seu novo assistente digital.",
+      "com varias funções de personalização.",
+      "analise de arquivos, detecção de malware, e muito mais...",
+      "carregando..."
+    ];
+
+    let msgIndex = 0;
+    let charIndex = 0;
+
+    function escreverMensagem() {
+      if (msgIndex < mensagens.length) {
+        const msg = mensagens[msgIndex];
+        if (charIndex < msg.length) {
+          introText.innerHTML = msg.substring(0, charIndex + 1) + '<span class="cursor intro-cursor"></span>';
+          charIndex++;
+          setTimeout(escreverMensagem, 40);
+        } else {
+          msgIndex++;
+          charIndex = 0;
+          setTimeout(escreverMensagem, 1000);
+        }
+      } else {
+        iniciarBarraProgresso();
+      }
+    }
+
+    function iniciarBarraProgresso() {
+      let largura = 0;
+      const intervalo = setInterval(() => {
+        largura += 2;
+        introProgress.style.width = `${largura}%`;
+        if (largura >= 100) {
+          clearInterval(intervalo);
+          intro.style.transition = "opacity 0.5s ease";
+          intro.style.opacity = "0";
+          setTimeout(() => {
+            intro.style.display = "none";
+          }, 600);
+        }
+      }, 30);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      escreverMensagem();
+    });
+  </script></body>
+</html>
+
