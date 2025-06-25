@@ -3,56 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ChatBoyAI - Dashboard</title>
+  <title>ChatBoyAI</title>
+
+  <!-- Intro.js CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css"> 
+
   <style>
-    /* Reset */
-    * {
+    :root {
+      --primary: #6C47FF;
+      --secondary: #FF6EC7;
+      --bg-light: #f9f9f9;
+      --bg-dark: #1a1a2e;
+      --text-light: #333;
+      --text-dark: #eee;
+      --accent: #ffcc00;
+    }
+
+    body {
       margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-    }
-    html, body {
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1e1f26, #2d2f40);
-      color: white;
-      overflow-x: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
-    /* Typography & Shadows */
-    .text-gradient {
-      background: linear-gradient(to right, #7b3efc, #9d5eff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
     }
-    .shadow-sm { box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .shadow-md { box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-    .hover-shadow:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: box-shadow 0.3s ease; }
 
-    /* Header */
     header {
       position: sticky;
       top: 0;
       z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: linear-gradient(90deg, #3a3d5a, #4d5075);
-      padding: 1rem 2rem;
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
       color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
     }
-    .avatar {
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    .user-avatar {
       width: 40px;
       height: 40px;
-      background: #fff;
-      color: #3a3d5a;
+      background: white;
+      color: var(--primary);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -61,641 +64,733 @@
       cursor: pointer;
     }
 
-    /* Sidebar */
-    nav {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 240px;
-      background: #1e1f26;
+    main {
       display: flex;
-      flex-direction: column;
-      padding-top: 4rem;
-      border-right: 1px solid rgba(255,255,255,0.05);
-      overflow-y: auto;
+      flex: 1;
+      position: relative;
     }
+
+    nav {
+      width: 220px;
+      background: var(--bg-dark);
+      color: white;
+      padding: 2rem 1rem;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    }
+
     nav button {
+      display: block;
+      width: 100%;
+      padding: 1rem;
       text-align: left;
-      padding: 1rem 2rem;
       background: none;
       border: none;
       color: white;
       font-size: 1rem;
       cursor: pointer;
       transition: background 0.3s ease;
-    }
-    nav button:hover,
-    nav button.active {
-      background: rgba(255,255,255,0.05);
-      border-left: 3px solid #9d5eff;
-      padding-left: calc(2rem - 3px);
+      margin-bottom: 0.5rem;
     }
 
-    /* Main Content */
-    main {
-      margin-left: 240px;
+    nav button.active {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+
+    .content {
+      flex: 1;
       padding: 2rem;
-      min-height: calc(100vh - 60px - 40px);
-      transition: all 0.3s ease;
+      overflow-y: auto;
     }
-    section {
+
+    .section {
       display: none;
-      animation: fadeInUp 0.6s ease forwards;
     }
-    section.active {
+
+    .section.active {
       display: block;
+      animation: fadeInUp 0.5s ease forwards;
     }
 
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Cards (Dashboard) */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
+    .summary-card {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-    .card {
-      background: rgba(255,255,255,0.05);
-      padding: 1.5rem;
-      border-radius: 12px;
+
+    .summary-item {
+      flex: 1;
+      min-width: 200px;
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      border-radius: 10px;
       text-align: center;
-      transition: transform 0.3s ease;
-      border: 1px solid rgba(255,255,255,0.05);
-      backdrop-filter: blur(5px);
     }
-    .card:hover {
-      transform: translateY(-5px);
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
     }
-    .card h3 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      color: #ffffffcc;
-    }
-    .graph {
-      background: rgba(255,255,255,0.1);
-      height: 10px;
-      border-radius: 5px;
+
+    .bar-chart {
+      height: 100px;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
       margin-top: 1rem;
-      position: relative;
     }
+
     .bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      background: linear-gradient(to right, #7b3efc, #9d5eff);
-      width: 0%;
-      animation: growBar 1s ease-in-out forwards;
+      flex: 1;
+      background: white;
+      height: 0;
+      transition: height 0.6s ease;
     }
 
-    @keyframes growBar {
-      from { width: 0; }
-      to { width: var(--percent); }
-    }
-
-    /* Chat Section */
-    .chat-container {
+    .chat-window {
+      background: #f0f0f0;
+      border-radius: 10px;
+      padding: 1rem;
+      height: 400px;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      height: 100%;
-      max-height: 600px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 1rem;
-      overflow-y: auto;
-      transition: all 0.3s ease;
+      gap: 0.5rem;
     }
+
     .message {
-      margin: 0.5rem 0;
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
       max-width: 70%;
-      animation: fadeIn 0.4s ease;
+      padding: 0.75rem 1rem;
+      border-radius: 15px;
+      line-height: 1.4;
+      font-size: 0.95rem;
     }
-    .user {
-      background: linear-gradient(to right, #7b3efc, #9d5eff);
+
+    .user-message {
       align-self: flex-end;
-      color: black;
-    }
-    .bot {
-      background: linear-gradient(to right, #3a3d5a, #4d5075);
-      align-self: flex-start;
+      background: var(--primary);
       color: white;
     }
+
+    .bot-message {
+      align-self: flex-start;
+      background: #ddd;
+      color: #333;
+    }
+
     .chat-input {
       display: flex;
+      gap: 0.5rem;
       margin-top: 1rem;
     }
+
     .chat-input input {
       flex: 1;
       padding: 0.75rem;
-      border: none;
-      border-radius: 8px 0 0 8px;
-      outline: none;
-      background: rgba(255,255,255,0.05);
-      color: white;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
     }
+
     .chat-input button {
-      padding: 0.75rem 1rem;
-      background: linear-gradient(to right, #7b3efc, #9d5eff);
-      color: white;
+      padding: 0.75rem 1.2rem;
       border: none;
-      border-radius: 0 8px 8px 0;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
       cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    .chat-input button:hover {
-      background: linear-gradient(to right, #6b2bf5, #8d4fe5);
+      font-weight: bold;
     }
 
-    .fullscreen-toggle {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-      padding: 0.5rem;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: background 0.3s ease;
-    }
-    .fullscreen-toggle:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
-    /* Settings Section */
-    .settings {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .toggle-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .toggle {
+    .chat-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255,255,255,0.05);
-      padding: 1rem;
-      border-radius: 12px;
+      margin-bottom: 1rem;
     }
-    .switch {
-      position: relative;
-      width: 40px;
-      height: 20px;
-    }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
+
+    .toggle-fullscreen {
+      background: none;
+      border: 1px solid white;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
       cursor: pointer;
+    }
+
+    .fullscreen {
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #ccc;
-      transition: 0.4s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #7b3efc;
-    }
-    input:checked + .slider:before {
-      transform: translateX(20px);
+      z-index: 1001;
+      background: white;
+      color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1rem;
     }
 
-    /* Premium Section */
-    .premium-section {
-      display: none;
-      flex-direction: column;
-      gap: 2rem;
-      animation: fadeInUp 0.6s ease forwards;
-    }
-    .plans {
+    .settings-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
     }
-    .plan {
-      background: #262732;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.05);
-      transition: transform 0.3s ease;
+
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 0.75rem;
+      border-radius: 10px;
     }
-    .plan:hover {
-      transform: translateY(-5px);
+
+    .terminal {
+      background: #111;
+      color: #0f0;
+      padding: 1rem;
+      border-radius: 10px;
+      height: 200px;
+      overflow-y: auto;
+      margin-top: 1rem;
+      font-family: monospace;
     }
-    .plan h3 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: #ffffffcc;
+
+    .command-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
     }
-    .price {
-      font-size: 2rem;
-      color: #7b3efc;
-      margin-bottom: 1rem;
-    }
-    .features {
-      list-style: none;
-      margin-bottom: 1rem;
-      text-align: left;
-    }
-    .features li::before {
-      content: "✔️ ";
-    }
-    .select-btn {
-      background: linear-gradient(to right, #7b3efc, #9d5eff);
+
+    .command-btn {
+      background: var(--primary);
       color: white;
-      padding: 0.75rem 1.5rem;
+      padding: 0.4rem 0.8rem;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
-    .select-btn:hover {
-      background: linear-gradient(to right, #6b2bf5, #8d4fe5);
     }
 
-    /* Footer */
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 240px;
-      width: calc(100% - 240px);
-      background: #1e1f26;
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      border-top: 1px solid rgba(255,255,255,0.05);
+    .pricing-cards {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    footer a {
-      color: #7b3efc;
-      margin: 0 0.5rem;
+
+    .pricing-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      flex: 1;
+      min-width: 250px;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .pricing-card h3 {
+      color: var(--primary);
+    }
+
+    .bot-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .bot-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      flex: 1;
+      min-width: 200px;
+      max-width: 250px;
+      text-align: center;
+    }
+
+    .avatar-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 1rem auto;
+    }
+
+    .avatar-part {
+      position: absolute;
+      transition: all 0.3s ease;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: var(--bg-dark);
+      color: white;
+    }
+
+    a {
+      color: var(--accent);
       text-decoration: none;
     }
 
-    /* Fullscreen Mode */
-    .fullscreen {
-      margin: 0;
-      padding: 0;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 9999;
-      background: #1e1f26;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      animation: fadeSlideIn 0.4s ease forwards;
-    }
-
-    @keyframes fadeSlideIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .fullscreen .chat-container {
-      max-height: 80vh;
-      width: 90vw;
-    }
-
-    .fullscreen-toggle.fullscreen-mode {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 10000;
+    a:hover {
+      text-decoration: underline;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+      }
+
       nav {
         width: 100%;
-        height: auto;
-        position: static;
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 1rem 0;
-        border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        flex-shrink: 0;
       }
-      main {
-        margin-left: 0;
-        padding: 1rem;
-      }
-      footer {
-        left: 0;
-        width: 100%;
+
+      .summary-card {
+        flex-direction: column;
       }
     }
   </style>
 </head>
-<body>
+<body data-intro="Bem-vindo ao ChatBoyAI!" data-intro-position="top">
 
-<!-- Sidebar -->
-<nav id="sidebar">
-  <button class="active" onclick="showSection('inicio')">🏠 Início</button>
-  <button onclick="showSection('chat')">💬 Bate-papo</button>
-  <button onclick="showSection('settings')">⚙️ Configurações</button>
-</nav>
+  <header>
+    <div class="logo">ChatBoyAI</div>
+    <div class="user-avatar" title="Usuário">AB</div>
+  </header>
 
-<!-- Header -->
-<header>
-  <div class="logo">ChatBoyAI</div>
-  <div class="avatar">CB</div>
-</header>
+  <main>
+    <nav>
+      <button id="btn-inicio" class="active">Início</button>
+      <button id="btn-chat">Bate-papo</button>
+      <button id="btn-configuracoes">Configurações</button>
+    </nav>
 
-<!-- Main Sections -->
-<main>
-  <!-- Dashboard -->
-  <section id="inicio" class="active">
-    <h2 class="text-gradient">📊 Dashboard</h2>
-    <div class="cards">
-      <div class="card shadow-md">
-        <h3>1.2k</h3>
-        <p>Mensagens Enviadas</p>
-        <div class="graph"><div class="bar" style="--percent: 80%;"></div></div>
-      </div>
-      <div class="card shadow-md">
-        <h3>345</h3>
-        <p>Usuários Ativos</p>
-        <div class="graph"><div class="bar" style="--percent: 60%;"></div></div>
-      </div>
-      <div class="card shadow-md">
-        <h3>😄 92%</h3>
-        <p>Sentimento Positivo</p>
-        <div class="graph"><div class="bar" style="--percent: 92%;"></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Chat Section -->
-  <section id="chat">
-    <h2 class="text-gradient">💬 Simulação de Chat</h2>
-    <div class="chat-container" id="chatBox">
-      <div class="message bot">Olá! Sou o ChatBoyAI 😊 Como posso ajudar?</div>
-    </div>
-    <div class="chat-input">
-      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
-      <button onclick="sendMessage()">Enviar</button>
-    </div>
-    <button class="fullscreen-toggle" title="Alternar tela cheia" onclick="toggleFullscreen()">
-      🖥️
-    </button>
-  </section>
-
-  <!-- Settings Section -->
-  <section id="settings">
-    <h2 class="text-gradient">⚙️ Configurações</h2>
-    <div class="settings">
-      <div class="toggle-group">
-        <div class="toggle shadow-sm hover-shadow">
-          <span>🌙 Modo Escuro</span>
-          <label class="switch">
-            <input type="checkbox" onchange="toggleDarkMode(this.checked)">
-            <span class="slider"></span>
-          </label>
+    <div class="content">
+      <section id="inicio" class="section active">
+        <h2>Início</h2>
+        <div class="summary-card">
+          <div class="summary-item">
+            <h3>Total de mensagens enviadas</h3>
+            <p id="total-msgs">0</p>
+          </div>
+          <div class="summary-item">
+            <h3>Usuários ativos</h3>
+            <p id="usuarios-online">0</p>
+          </div>
+          <div class="summary-item">
+            <h3>Sentimento médio</h3>
+            <p id="sentimento">Neutro</p>
+          </div>
         </div>
-        <div class="toggle shadow-sm hover-shadow">
-          <span>🌍 Tradução automática</span>
-          <label class="switch">
+        <div class="card">
+          <h3>Mensagens por dia</h3>
+          <div class="bar-chart" id="bar-chart">
+            <div class="bar" style="height: 0%"></div>
+            <div class="bar" style="height: 0%"></div>
+            <div class="bar" style="height: 0%"></div>
+            <div class="bar" style="height: 0%"></div>
+            <div class="bar" style="height: 0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="chat" class="section">
+        <div class="chat-header">
+          <h2>Bate-papo</h2>
+          <button class="toggle-fullscreen" onclick="toggleFullscreen()">Entrar em Tela Cheia</button>
+        </div>
+        <div class="chat-window" id="chat-window">
+          <!-- Messages will appear here -->
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Digite sua mensagem..." onkeydown="handleEnter(event)" />
+          <button onclick="sendMessage()">Enviar</button>
+        </div>
+      </section>
+
+      <section id="configuracoes" class="section">
+        <h2>Configurações</h2>
+        <div class="card settings-grid">
+          <div class="toggle-group">
+            <label>Modo Escuro / Claro</label>
+            <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+          </div>
+          <div class="toggle-group">
+            <label>Fontes</label>
+            <select>
+              <option>Padrão</option>
+              <option>Arial</option>
+              <option>Monospace</option>
+            </select>
+          </div>
+          <div class="toggle-group">
+            <label>Sons de mensagem</label>
+            <input type="checkbox" checked>
+          </div>
+          <div class="toggle-group">
+            <label>Tradução Automática</label>
             <input type="checkbox">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="toggle shadow-sm hover-shadow">
-          <span>💣 Mensagens autodestrutivas</span>
-          <label class="switch">
+          </div>
+          <div class="toggle-group">
+            <label>Mensagens Autodestrutivas</label>
             <input type="checkbox">
-            <span class="slider"></span>
-          </label>
+          </div>
+          <div class="toggle-group">
+            <label>Texto-para-Voz</label>
+            <input type="checkbox">
+          </div>
+          <div class="toggle-group">
+            <label>Central de Comandos</label>
+            <button onclick="openTerminal()">Abrir</button>
+          </div>
+          <div class="toggle-group">
+            <label>Ver Planos Premium</label>
+            <button onclick="showPremiumPlans()">Ver</button>
+          </div>
         </div>
-      </div>
-      <button class="subscribe-btn" onclick="togglePremium()">💳 Assinar Premium</button>
 
-      <!-- Premium Section -->
-      <div class="premium-section" id="premiumPlans">
-        <h3 class="text-gradient">🌟 Planos Disponíveis</h3>
-        <div class="plans">
-          <div class="plan shadow-md">
-            <h3>Plano Básico</h3>
-            <div class="price">R$9,90/mês</div>
-            <ul class="features">
-              <li>Acesso a 3 bots</li>
-              <li>Respostas rápidas</li>
-              <li>Personalização básica</li>
-            </ul>
-            <button class="select-btn">Selecionar Plano</button>
-          </div>
-          <div class="plan shadow-md">
-            <h3>Plano Avançado</h3>
-            <div class="price">R$19,90/mês</div>
-            <ul class="features">
-              <li>Acesso ilimitado a bots</li>
-              <li>IA avançada</li>
-              <li>Personalização visual total</li>
-            </ul>
-            <button class="select-btn">Selecionar Plano</button>
-          </div>
-          <div class="plan shadow-md">
-            <h3>Plano Empresarial</h3>
-            <div class="price">R$49,90/mês</div>
-            <ul class="features">
-              <li>Tudo do plano anterior</li>
-              <li>Suporte prioritário</li>
-              <li>Integração com sistemas externos</li>
-              <li>Painel de controle especial</li>
-            </ul>
-            <button class="select-btn">Selecionar Plano</button>
+        <div id="terminal-section" class="card" style="display:none;">
+          <h3>Central de Comandos</h3>
+          <div class="terminal" id="terminal-output">Bem-vindo à Central de Comandos.</div>
+          <div class="command-list">
+            <button class="command-btn" onclick="runCommand('/ajuda')">/ajuda</button>
+            <button class="command-btn" onclick="runCommand('/test')">/test</button>
+            <button class="command-btn" onclick="runCommand('/banir @usuario')">/banir @usuario</button>
           </div>
         </div>
-        <h3 class="text-gradient">🧠 Tipos de Bot com Premium</h3>
-        <div class="cards">
-          <div class="card shadow-sm">
-            <h3>👮‍♂️ Moderação</h3>
-            <p>Filtragem automática de conteúdo impróprio.</p>
-          </div>
-          <div class="card shadow-sm">
-            <h3>📞 Atendimento</h3>
-            <p>Suporte 24/7 automatizado para seus clientes.</p>
-          </div>
-          <div class="card shadow-sm">
-            <h3>🌐 Tradução</h3>
-            <p>Traduz automaticamente conversas multilíngues.</p>
+
+        <div id="premium-section" class="card" style="display:none;">
+          <h3>Planos Premium</h3>
+          <div class="pricing-cards">
+            <div class="pricing-card">
+              <h3>Plano Básico</h3>
+              <p>R$9,90/mês</p>
+              <ul>
+                <li>Até 3 bots</li>
+                <li>Respostas médias</li>
+                <li>Personalização básica</li>
+              </ul>
+              <button>Selecionar Plano</button>
+            </div>
+            <div class="pricing-card">
+              <h3>Plano Avançado</h3>
+              <p>R$19,90/mês</p>
+              <ul>
+                <li>Bots ilimitados</li>
+                <li>IA avançada</li>
+                <li>Personalização visual completa</li>
+              </ul>
+              <button>Selecionar Plano</button>
+            </div>
+            <div class="pricing-card">
+              <h3>Plano Empresarial</h3>
+              <p>R$49,90/mês</p>
+              <ul>
+                <li>Tudo do Avançado</li>
+                <li>Suporte prioritário</li>
+                <li>Integrações externas</li>
+              </ul>
+              <button>Selecionar Plano</button>
+            </div>
           </div>
         </div>
-      </div>
+
+        <div class="card">
+          <h3>Demonstração de Bots</h3>
+          <div class="bot-cards">
+            <div class="bot-card">
+              <h4>Moderação</h4>
+              <p>Gerencia conversas e regras.</p>
+              <button onclick="simulateBotChat('Moderação')">Testar</button>
+            </div>
+            <div class="bot-card">
+              <h4>Atendimento</h4>
+              <p>Suporte rápido e eficiente.</p>
+              <button onclick="simulateBotChat('Atendimento')">Testar</button>
+            </div>
+            <div class="bot-card">
+              <h4>Tradução</h4>
+              <p>Traduz mensagens automaticamente.</p>
+              <button onclick="simulateBotChat('Tradução')">Testar</button>
+            </div>
+            <div class="bot-card">
+              <h4>Trading</h4>
+              <p>Informações sobre criptomoedas.</p>
+              <button onclick="simulateBotChat('Trading')">Testar</button>
+            </div>
+            <div class="bot-card">
+              <h4>Engajamento Social</h4>
+              <p>Promove interações entre usuários.</p>
+              <button onclick="simulateBotChat('Engajamento Social')">Testar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Personalizar Bot</h3>
+          <div class="avatar-container">
+            <img src="https://placehold.co/150x150?text=Bot" alt="Bot Avatar" class="avatar-part" id="avatar-base" />
+            <img src="https://placehold.co/150x150/FFD700?text=Camisa" alt="Camisa" class="avatar-part" id="avatar-shirt" style="display:none;" />
+            <img src="https://placehold.co/150x150/4682B4?text=Calça" alt="Calça" class="avatar-part" id="avatar-pants" style="display:none;" />
+            <img src="https://placehold.co/150x150/228B22?text=Tênis" alt="Tênis" class="avatar-part" id="avatar-shoes" style="display:none;" />
+            <img src="https://placehold.co/150x150/8A2BE2?text=Chapéu" alt="Chapéu" class="avatar-part" id="avatar-hat" style="display:none;" />
+            <img src="https://placehold.co/150x150/DC143C?text=Óculos" alt="Óculos" class="avatar-part" id="avatar-glasses" style="display:none;" />
+            <img src="https://placehold.co/150x150/FF8C00?text=Mochila" alt="Mochila" class="avatar-part" id="avatar-backpack" style="display:none;" />
+            <img src="https://placehold.co/150x150/00CED1?text=Skin" alt="Skin" class="avatar-part" id="avatar-skin" style="display:none;" />
+          </div>
+          <div class="settings-grid">
+            <div>
+              <h4>Camisas</h4>
+              <button onclick="applyAccessory('shirt')">Adicionar Camisa</button>
+            </div>
+            <div>
+              <h4>Calças</h4>
+              <button onclick="applyAccessory('pants')">Adicionar Calça</button>
+            </div>
+            <div>
+              <h4>Tênis</h4>
+              <button onclick="applyAccessory('shoes')">Adicionar Tênis</button>
+            </div>
+            <div>
+              <h4>Chapéus</h4>
+              <button onclick="applyAccessory('hat')">Adicionar Chapéu</button>
+            </div>
+            <div>
+              <h4>Óculos</h4>
+              <button onclick="applyAccessory('glasses')">Adicionar Óculos</button>
+            </div>
+            <div>
+              <h4>Mochilas</h4>
+              <button onclick="applyAccessory('backpack')">Adicionar Mochila</button>
+            </div>
+            <div>
+              <h4>Skins</h4>
+              <button onclick="applyAccessory('skin')">Adicionar Skin</button>
+            </div>
+          </div>
+          <div style="margin-top: 1rem;">
+            <button onclick="saveStyle()">Salvar Visual</button>
+            <button onclick="resetStyle()">Resetar Estilo</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>InsightAI - Análise Avançada</h3>
+          <canvas id="insight-chart" width="400" height="200"></canvas>
+        </div>
+      </section>
     </div>
-  </section>
-</main>
+  </main>
 
-<!-- Footer -->
-<footer>
-  &copy; 2025 ChatBoyAI. Todos os direitos reservados.
-  <br/>
-  <a href="https://discord.gg/9U9WnfF9"  target="_blank">Discord</a> |
-  <a href="https://instagram.com/chatboyai"  target="_blank">@chatboyai</a>
-</footer>
+  <footer>
+    <p>© 2025 ChatBoyAI – Todos os direitos reservados</p>
+    <p>
+      <a href="https://discord.gg/9U9WnfF9" target="_blank">Discord</a> | 
+      <a href="#" target="_blank">@chatboyai</a> 
+    </p>
+  </footer>
 
-<!-- Fullscreen Chat Overlay -->
-<div id="fullscreenChat" class="fullscreen" style="display: none;">
-  <div class="chat-container" id="fullscreenChatBox">
-    <div class="message bot">Olá! Sou o ChatBoyAI 😊 Como posso ajudar?</div>
-  </div>
-  <div class="chat-input">
-    <input type="text" id="fullscreenChatInput" placeholder="Digite sua mensagem..." />
-    <button onclick="sendFullscreenMessage()">Enviar</button>
-  </div>
-  <button class="fullscreen-toggle fullscreen-mode" onclick="exitFullscreen()">❌</button>
-</div>
+  <!-- Intro.js JS -->
+  <script src="https://unpkg.com/intro.js/minified/introjs.min.js"></script> 
 
-<script>
-  
-  // Garante que premiumPlans começa fechado ao abrir a página
-document.addEventListener('DOMContentLoaded', function() {
-  const premium = document.getElementById("premiumPlans");
-  if (premium) premium.style.display = "none";
-});
-  // Show/hide sections
-  function showSection(id) {
-    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
+  <script>
+    const sections = ['inicio', 'chat', 'configuracoes'];
+    const buttons = ['btn-inicio', 'btn-chat', 'btn-configuracoes'];
 
-    // Update sidebar active state
-    const buttons = document.querySelectorAll("#sidebar button");
-    buttons.forEach(btn => btn.classList.remove("active"));
-    if (id === 'inicio') buttons[0].classList.add("active");
-    if (id === 'chat') buttons[1].classList.add("active");
-    if (id === 'settings') buttons[2].classList.add("active");
-  }
+    function showSection(id) {
+      // Hide all sections
+      sections.forEach(sec => {
+        document.getElementById(sec).classList.remove('active');
+      });
+      // Remove active from all buttons
+      buttons.forEach(btn => {
+        document.getElementById(btn).classList.remove('active');
+      });
+      // Show current section and highlight button
+      document.getElementById(id).classList.add('active');
+      document.getElementById(`btn-${id}`).classList.add('active');
+    }
 
-function togglePremium() {
-  const section = document.getElementById("premiumPlans");
-  section.style.display = (section.style.display === "none" || !section.style.display) ? "flex" : "none";
-}
+    // Attach click handlers
+    document.getElementById('btn-inicio').addEventListener('click', () => showSection('inicio'));
+    document.getElementById('btn-chat').addEventListener('click', () => showSection('chat'));
+    document.getElementById('btn-configuracoes').addEventListener('click', () => showSection('configuracoes'));
 
-  // Chat simulation
-  function sendMessage() {
-    const input = document.getElementById("chatInput");
-    const message = input.value.trim();
-    if (!message) return;
+    // Dashboard stats
+    let totalMsgs = 0;
+    function updateDashboard() {
+      document.getElementById('total-msgs').textContent = totalMsgs;
+      document.getElementById('usuarios-online').textContent = Math.floor(Math.random() * 20) + 1;
+      const sentiment = ['Positivo', 'Neutro', 'Negativo'][Math.floor(Math.random() * 3)];
+      document.getElementById('sentimento').textContent = sentiment;
 
-    const chatBox = document.getElementById("chatBox");
+      const bars = document.querySelectorAll('.bar');
+      bars.forEach(bar => {
+        const height = Math.random() * 100;
+        bar.style.height = `${height}%`;
+      });
+    }
 
-    // User message
-    const userMsg = document.createElement("div");
-    userMsg.className = "message user";
-    userMsg.textContent = message;
-    chatBox.appendChild(userMsg);
+    setInterval(updateDashboard, 5000);
+    updateDashboard();
 
-    // Bot response
-    setTimeout(() => {
-      const botMsg = document.createElement("div");
-      botMsg.className = "message bot";
-      botMsg.textContent = "Você disse: \"" + message + "\". Obrigado!";
-      chatBox.appendChild(botMsg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }, 500);
+    // Chat logic
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      if (!message) return;
 
-    input.value = "";
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+      addMessage(message, 'user');
+      input.value = '';
+      totalMsgs++;
+      updateDashboard();
 
-  // Fullscreen chat
-  function toggleFullscreen() {
-    document.getElementById("fullscreenChat").style.display = "flex";
-    document.querySelector("main").style.display = "none";
-    document.querySelector("nav").style.display = "none";
-    document.querySelector("header").style.display = "none";
-    document.querySelector("footer").style.display = "none";
-  }
+      setTimeout(() => {
+        const replies = [
+          "Entendi! Como posso ajudar?",
+          "Essa é uma ótima pergunta!",
+          "Vamos verificar isso para você.",
+          "Hmm... pensando...",
+          "Preciso de mais detalhes."
+        ];
+        addMessage(replies[Math.floor(Math.random() * replies.length)], 'bot');
+      }, 1000);
+    }
 
-function exitFullscreen() {
-  document.getElementById("fullscreenChat").style.display = "none";
-  document.querySelector("main").style.display = "block";
-  document.querySelector("nav").style.display = "flex";
-  document.querySelector("header").style.display = "flex";
-  document.querySelector("footer").style.display = "block";
-}
+    function addMessage(text, type) {
+      const chatWindow = document.getElementById('chat-window');
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('message');
+      msgDiv.classList.add(type === 'user' ? 'user-message' : 'bot-message');
+      msgDiv.textContent = text;
+      chatWindow.appendChild(msgDiv);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
 
-  function sendFullscreenMessage() {
-    const input = document.getElementById("fullscreenChatInput");
-    const message = input.value.trim();
-    if (!message) return;
+    function handleEnter(e) {
+      if (e.key === 'Enter') sendMessage();
+    }
 
-    const chatBox = document.getElementById("fullscreenChatBox");
+    // Fullscreen toggle
+    function toggleFullscreen() {
+      const chatSection = document.getElementById('chat');
+      const btn = document.querySelector('.toggle-fullscreen');
+      if (!document.fullscreenElement) {
+        chatSection.classList.add('fullscreen');
+        btn.textContent = 'Sair da Tela Cheia';
+      } else {
+        chatSection.classList.remove('fullscreen');
+        btn.textContent = 'Entrar em Tela Cheia';
+        document.exitFullscreen();
+      }
+    }
 
-    const userMsg = document.createElement("div");
-    userMsg.className = "message user";
-    userMsg.textContent = message;
-    chatBox.appendChild(userMsg);
+    // Dark mode toggle
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
 
-    setTimeout(() => {
-      const botMsg = document.createElement("div");
-      botMsg.className = "message bot";
-      botMsg.textContent = "Você disse: \"" + message + "\". Obrigado!";
-      chatBox.appendChild(botMsg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }, 500);
+    // Terminal simulation
+    function openTerminal() {
+      document.getElementById('terminal-section').style.display = 'block';
+    }
 
-    input.value = "";
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+    function runCommand(cmd) {
+      const output = document.getElementById('terminal-output');
+      output.innerHTML += `<br>> ${cmd}<br>`;
+      if (cmd === '/ajuda') {
+        output.innerHTML += 'Comandos disponíveis: /ajuda, /test, /banir @usuario<br>';
+      } else if (cmd === '/test') {
+        output.innerHTML += 'Sistema funcionando normalmente.<br>';
+      } else if (cmd.startsWith('/banir')) {
+        const user = cmd.split('@')[1];
+        output.innerHTML += `Usuário @${user} banido com sucesso.<br>`;
+      }
+      output.scrollTop = output.scrollHeight;
+    }
 
-  // Dark mode toggle
-  function toggleDarkMode(isDark) {
-    document.body.style.background = isDark ?
-      "linear-gradient(135deg, #1e1f26, #2d2f40)" :
-      "linear-gradient(135deg, #f5f7fa, #c3cfe2)";
-  }
-  // Permite sair do fullscreen pressionando ESC
-document.addEventListener('keydown', function(e) {
-  const fullscreen = document.getElementById("fullscreenChat");
-  if (fullscreen.style.display === "flex" && e.key === "Escape") {
-    exitFullscreen();
-  }
-});
-</script>
+    // Show premium plans
+    function showPremiumPlans() {
+      document.getElementById('premium-section').style.display = 'block';
+    }
+
+    // Avatar customization
+    function applyAccessory(part) {
+      const el = document.getElementById(`avatar-${part}`);
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function saveStyle() {
+      alert("Visual salvo com sucesso!");
+    }
+
+    function resetStyle() {
+      document.querySelectorAll('.avatar-part').forEach(el => {
+        if (el.id !== 'avatar-base') el.style.display = 'none';
+      });
+    }
+
+    function simulateBotChat(botName) {
+      alert(`Simulando chat com o bot "${botName}"`);
+    }
+
+    // ChartJS for InsightAI
+    const ctx = document.getElementById('insight-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [{
+          label: 'Análise de Mensagens',
+          data: [12, 19, 3, 5, 2],
+          borderColor: '#6C47FF',
+          fill: false,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Intro tour
+    window.onload = function() {
+      introJs().setOptions({
+        tooltipPosition: 'auto',
+        buttons: ['prev', 'next', 'done'],
+        prevLabel: 'Voltar',
+        nextLabel: 'Próximo',
+        doneLabel: 'Entendi',
+        tooltipClass: 'introjs-tooltip',
+        highlightClass: 'introjs-highlight',
+        exitOnOverlayClick: false,
+        showProgress: true
+      }).start();
+    };
+  </script>
 </body>
 </html>
