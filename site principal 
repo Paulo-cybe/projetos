@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatBoyAI - Dashboard</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e1f26, #2d2f40);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    /* Typography & Shadows */
+    .text-gradient {
+      background: linear-gradient(to right, #7b3efc, #9d5eff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .shadow-sm { box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .shadow-md { box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    .hover-shadow:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: box-shadow 0.3s ease; }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #3a3d5a, #4d5075);
+      padding: 1rem 2rem;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      color: #3a3d5a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Sidebar */
+    nav {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 240px;
+      background: #1e1f26;
+      display: flex;
+      flex-direction: column;
+      padding-top: 4rem;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      overflow-y: auto;
+    }
+    nav button {
+      text-align: left;
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    nav button:hover,
+    nav button.active {
+      background: rgba(255,255,255,0.05);
+      border-left: 3px solid #9d5eff;
+      padding-left: calc(2rem - 3px);
+    }
+
+    /* Main Content */
+    main {
+      margin-left: 240px;
+      padding: 2rem;
+      min-height: calc(100vh - 60px - 40px);
+      transition: all 0.3s ease;
+    }
+    section {
+      display: none;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    section.active {
+      display: block;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Cards (Dashboard) */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(5px);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card h3 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #ffffffcc;
+    }
+    .graph {
+      background: rgba(255,255,255,0.1);
+      height: 10px;
+      border-radius: 5px;
+      margin-top: 1rem;
+      position: relative;
+    }
+    .bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(to right, #7b3efc, #9d5eff);
+      width: 0%;
+      animation: growBar 1s ease-in-out forwards;
+    }
+
+    @keyframes growBar {
+      from { width: 0; }
+      to { width: var(--percent); }
+    }
+
+    /* Chat Section */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: 600px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 1rem;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+    .message {
+      margin: 0.5rem 0;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      max-width: 70%;
+      animation: fadeIn 0.4s ease;
+    }
+    .user {
+      background: linear-gradient(to right, #7b3efc, #9d5eff);
+      align-self: flex-end;
+      color: black;
+    }
+    .bot {
+      background: linear-gradient(to right, #3a3d5a, #4d5075);
+      align-self: flex-start;
+      color: white;
+    }
+    .chat-input {
+      display: flex;
+      margin-top: 1rem;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      outline: none;
+      background: rgba(255,255,255,0.05);
+      color: white;
+    }
+    .chat-input button {
+      padding: 0.75rem 1rem;
+      background: linear-gradient(to right, #7b3efc, #9d5eff);
+      color: white;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .chat-input button:hover {
+      background: linear-gradient(to right, #6b2bf5, #8d4fe5);
+    }
+
+    .fullscreen-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s ease;
+    }
+    .fullscreen-toggle:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Settings Section */
+    .settings {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .toggle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 12px;
+    }
+    .switch {
+      position: relative;
+      width: 40px;
+      height: 20px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #7b3efc;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Premium Section */
+    .premium-section {
+      display: none;
+      flex-direction: column;
+      gap: 2rem;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .plan {
+      background: #262732;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: transform 0.3s ease;
+    }
+    .plan:hover {
+      transform: translateY(-5px);
+    }
+    .plan h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #ffffffcc;
+    }
+    .price {
+      font-size: 2rem;
+      color: #7b3efc;
+      margin-bottom: 1rem;
+    }
+    .features {
+      list-style: none;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+    .features li::before {
+      content: "✔️ ";
+    }
+    .select-btn {
+      background: linear-gradient(to right, #7b3efc, #9d5eff);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    .select-btn:hover {
+      background: linear-gradient(to right, #6b2bf5, #8d4fe5);
+    }
+
+    /* Footer */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 240px;
+      width: calc(100% - 240px);
+      background: #1e1f26;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    footer a {
+      color: #7b3efc;
+      margin: 0 0.5rem;
+      text-decoration: none;
+    }
+
+    /* Fullscreen Mode */
+    .fullscreen {
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+      background: #1e1f26;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fadeSlideIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .fullscreen .chat-container {
+      max-height: 80vh;
+      width: 90vw;
+    }
+
+    .fullscreen-toggle.fullscreen-mode {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10000;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        width: 100%;
+        height: auto;
+        position: static;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 1rem 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+      main {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      footer {
+        left: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <button class="active" onclick="showSection('inicio')">🏠 Início</button>
+  <button onclick="showSection('chat')">💬 Bate-papo</button>
+  <button onclick="showSection('settings')">⚙️ Configurações</button>
+</nav>
+
+<!-- Header -->
+<header>
+  <div class="logo">ChatBoyAI</div>
+  <div class="avatar">CB</div>
+</header>
+
+<!-- Main Sections -->
+<main>
+  <!-- Dashboard -->
+  <section id="inicio" class="active">
+    <h2 class="text-gradient">📊 Dashboard</h2>
+    <div class="cards">
+      <div class="card shadow-md">
+        <h3>1.2k</h3>
+        <p>Mensagens Enviadas</p>
+        <div class="graph"><div class="bar" style="--percent: 80%;"></div></div>
+      </div>
+      <div class="card shadow-md">
+        <h3>345</h3>
+        <p>Usuários Ativos</p>
+        <div class="graph"><div class="bar" style="--percent: 60%;"></div></div>
+      </div>
+      <div class="card shadow-md">
+        <h3>😄 92%</h3>
+        <p>Sentimento Positivo</p>
+        <div class="graph"><div class="bar" style="--percent: 92%;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat Section -->
+  <section id="chat">
+    <h2 class="text-gradient">💬 Simulação de Chat</h2>
+    <div class="chat-container" id="chatBox">
+      <div class="message bot">Olá! Sou o ChatBoyAI 😊 Como posso ajudar?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+    <button class="fullscreen-toggle" title="Alternar tela cheia" onclick="toggleFullscreen()">
+      🖥️
+    </button>
+  </section>
+
+  <!-- Settings Section -->
+  <section id="settings">
+    <h2 class="text-gradient">⚙️ Configurações</h2>
+    <div class="settings">
+      <div class="toggle-group">
+        <div class="toggle shadow-sm hover-shadow">
+          <span>🌙 Modo Escuro</span>
+          <label class="switch">
+            <input type="checkbox" onchange="toggleDarkMode(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle shadow-sm hover-shadow">
+          <span>🌍 Tradução automática</span>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle shadow-sm hover-shadow">
+          <span>💣 Mensagens autodestrutivas</span>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <button class="subscribe-btn" onclick="togglePremium()">💳 Assinar Premium</button>
+
+      <!-- Premium Section -->
+      <div class="premium-section" id="premiumPlans">
+        <h3 class="text-gradient">🌟 Planos Disponíveis</h3>
+        <div class="plans">
+          <div class="plan shadow-md">
+            <h3>Plano Básico</h3>
+            <div class="price">R$9,90/mês</div>
+            <ul class="features">
+              <li>Acesso a 3 bots</li>
+              <li>Respostas rápidas</li>
+              <li>Personalização básica</li>
+            </ul>
+            <button class="select-btn">Selecionar Plano</button>
+          </div>
+          <div class="plan shadow-md">
+            <h3>Plano Avançado</h3>
+            <div class="price">R$19,90/mês</div>
+            <ul class="features">
+              <li>Acesso ilimitado a bots</li>
+              <li>IA avançada</li>
+              <li>Personalização visual total</li>
+            </ul>
+            <button class="select-btn">Selecionar Plano</button>
+          </div>
+          <div class="plan shadow-md">
+            <h3>Plano Empresarial</h3>
+            <div class="price">R$49,90/mês</div>
+            <ul class="features">
+              <li>Tudo do plano anterior</li>
+              <li>Suporte prioritário</li>
+              <li>Integração com sistemas externos</li>
+              <li>Painel de controle especial</li>
+            </ul>
+            <button class="select-btn">Selecionar Plano</button>
+          </div>
+        </div>
+        <h3 class="text-gradient">🧠 Tipos de Bot com Premium</h3>
+        <div class="cards">
+          <div class="card shadow-sm">
+            <h3>👮‍♂️ Moderação</h3>
+            <p>Filtragem automática de conteúdo impróprio.</p>
+          </div>
+          <div class="card shadow-sm">
+            <h3>📞 Atendimento</h3>
+            <p>Suporte 24/7 automatizado para seus clientes.</p>
+          </div>
+          <div class="card shadow-sm">
+            <h3>🌐 Tradução</h3>
+            <p>Traduz automaticamente conversas multilíngues.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer>
+  &copy; 2025 ChatBoyAI. Todos os direitos reservados.
+  <br/>
+  <a href="https://discord.gg/9U9WnfF9"  target="_blank">Discord</a> |
+  <a href="https://instagram.com/chatboyai"  target="_blank">@chatboyai</a>
+</footer>
+
+<!-- Fullscreen Chat Overlay -->
+<div id="fullscreenChat" class="fullscreen" style="display: none;">
+  <div class="chat-container" id="fullscreenChatBox">
+    <div class="message bot">Olá! Sou o ChatBoyAI 😊 Como posso ajudar?</div>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="fullscreenChatInput" placeholder="Digite sua mensagem..." />
+    <button onclick="sendFullscreenMessage()">Enviar</button>
+  </div>
+  <button class="fullscreen-toggle fullscreen-mode" onclick="exitFullscreen()">❌</button>
+</div>
+
+<script>
+  // Show/hide sections
+  function showSection(id) {
+    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    // Update sidebar active state
+    const buttons = document.querySelectorAll("#sidebar button");
+    buttons.forEach(btn => btn.classList.remove("active"));
+    if (id === 'inicio') buttons[0].classList.add("active");
+    if (id === 'chat') buttons[1].classList.add("active");
+    if (id === 'settings') buttons[2].classList.add("active");
+  }
+
+  // Toggle premium section
+  function togglePremium() {
+    const section = document.getElementById("premiumPlans");
+    section.style.display = section.style.display === "none" ? "flex" : "none";
+  }
+
+  // Chat simulation
+  function sendMessage() {
+    const input = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatBox = document.getElementById("chatBox");
+
+    // User message
+    const userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.textContent = message;
+    chatBox.appendChild(userMsg);
+
+    // Bot response
+    setTimeout(() => {
+      const botMsg = document.createElement("div");
+      botMsg.className = "message bot";
+      botMsg.textContent = "Você disse: \"" + message + "\". Obrigado!";
+      chatBox.appendChild(botMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 500);
+
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // Fullscreen chat
+  function toggleFullscreen() {
+    document.getElementById("fullscreenChat").style.display = "flex";
+    document.querySelector("main").style.display = "none";
+    document.querySelector("nav").style.display = "none";
+    document.querySelector("header").style.display = "none";
+    document.querySelector("footer").style.display = "none";
+  }
+
+  function exitFullscreen() {
+    document.getElementById("fullscreenChat").style.display = "none";
+    document.querySelector("main").style.display = "block";
+    document.querySelector("nav").style.display = "flex";
+    document.querySelector("header").style.display = "flex";
+    document.querySelector("footer").style.display = "block";
+  }
+
+  function sendFullscreenMessage() {
+    const input = document.getElementById("fullscreenChatInput");
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatBox = document.getElementById("fullscreenChatBox");
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.textContent = message;
+    chatBox.appendChild(userMsg);
+
+    setTimeout(() => {
+      const botMsg = document.createElement("div");
+      botMsg.className = "message bot";
+      botMsg.textContent = "Você disse: \"" + message + "\". Obrigado!";
+      chatBox.appendChild(botMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 500);
+
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // Dark mode toggle
+  function toggleDarkMode(isDark) {
+    document.body.style.background = isDark ?
+      "linear-gradient(135deg, #1e1f26, #2d2f40)" :
+      "linear-gradient(135deg, #f5f7fa, #c3cfe2)";
+  }
+</script>
+</body>
+</html>
