@@ -3,794 +3,633 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ChatBoyAI</title>
-
-  <!-- Intro.js CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css"> 
-
+  <title>ChatBoyAI - Bots Inteligentes para Você</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"  integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
-      --primary: #6C47FF;
-      --secondary: #FF6EC7;
-      --bg-light: #f9f9f9;
-      --bg-dark: #1a1a2e;
-      --text-light: #333;
-      --text-dark: #eee;
-      --accent: #ffcc00;
+      --primary: #4A90E2;
+      --secondary: #764BA2;
+      --accent: #00ffe0;
+      --dark: #1a1a2e;
+      --light: #ffffff;
+      --gray: #282c3d;
+      --bg-card: #1f2132;
+      --hover-bg: #2a2e45;
+      --glass: rgba(255, 255, 255, 0.05);
+      --transition: all 0.3s ease-in-out;
+      --shadow: 0 8px 20px rgba(0, 255, 224, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+      scroll-behavior: smooth;
     }
 
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .dark-mode {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
+      background-color: var(--dark);
+      color: var(--light);
+      overflow-x: hidden;
     }
 
     header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      color: white;
+      height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-    }
-
-    .logo {
-      font-weight: bold;
-      font-size: 1.5rem;
-    }
-
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      background: white;
-      color: var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    main {
-      display: flex;
-      flex: 1;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       position: relative;
+      overflow: hidden;
     }
 
-    nav {
-      width: 220px;
-      background: var(--bg-dark);
-      color: white;
-      padding: 2rem 1rem;
-      box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, transparent 70%);
+      pointer-events: none;
     }
 
-    nav button {
-      display: block;
-      width: 100%;
-      padding: 1rem;
-      text-align: left;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      margin-bottom: 0.5rem;
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 1s ease-out forwards;
     }
 
-    nav button.active {
-      background: rgba(255,255,255,0.1);
-      border-radius: 8px;
+    header p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 1.5s ease-out forwards;
     }
 
-    .content {
-      flex: 1;
+    section {
+      padding: 4rem 2rem;
+      min-height: 100vh;
+      background: var(--dark);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: var(--accent);
+    }
+
+    .menu-nav,
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .card,
+    .config-card,
+    .plan-card,
+    .bot-card,
+    .combo-card,
+    .dashboard-card,
+    .test-area {
+      background: var(--bg-card);
+      border-radius: 12px;
       padding: 2rem;
-      overflow-y: auto;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
     }
 
-    .section {
+    .card:hover,
+    .config-card:hover,
+    .plan-card:hover,
+    .bot-card:hover,
+    .combo-card:hover,
+    .dashboard-card:hover,
+    .test-area:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0, 255, 224, 0.15);
+      background: var(--hover-bg);
+    }
+
+    .card::before,
+    .config-card::before,
+    .plan-card::before,
+    .bot-card::before,
+    .combo-card::before,
+    .dashboard-card::before,
+    .test-area::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0,255,224,0.05) 0%, transparent 60%);
+      transition: var(--transition);
+      pointer-events: none;
+    }
+
+    .card:hover::before,
+    .config-card:hover::before,
+    .plan-card:hover::before,
+    .bot-card:hover::before,
+    .combo-card:hover::before,
+    .dashboard-card:hover::before,
+    .test-area:hover::before {
+      top: -30%;
+      left: -30%;
+    }
+
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .price {
+      font-size: 1.2rem;
+      color: green;
+      margin-top: 1rem;
+    }
+
+    .config-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: bold;
+      width: 100%;
+      margin-top: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+      border-radius: 50%;
+    }
+
+    button:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    button:hover {
+      background: #357ABD;
+    }
+
+    .skin-selection {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .skin-option {
+      width: 80px;
+      height: 80px;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      object-fit: cover;
+    }
+
+    .skin-option:hover {
+      border-color: var(--accent);
+    }
+
+    .skin-option.selected {
+      border-color: var(--accent);
+      transform: scale(1.1);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .fullscreen-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
       display: none;
+      font-weight: bold;
+      transition: var(--transition);
     }
 
-    .section.active {
-      display: block;
-      animation: fadeInUp 0.5s ease forwards;
+    .chat-box {
+      background: var(--gray);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      height: 120px;
+      overflow-y: auto;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .timer {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      color: orange;
+    }
+
+    .active-button {
+      background: var(--accent);
+      color: black;
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .summary-card {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .summary-item {
-      flex: 1;
-      min-width: 200px;
-      background: var(--primary);
-      color: white;
-      padding: 1rem;
-      border-radius: 10px;
-      text-align: center;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 1.5rem;
-    }
-
-    .bar-chart {
-      height: 100px;
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      margin-top: 1rem;
-    }
-
-    .bar {
-      flex: 1;
-      background: white;
-      height: 0;
-      transition: height 0.6s ease;
-    }
-
-    .chat-window {
-      background: #f0f0f0;
-      border-radius: 10px;
-      padding: 1rem;
-      height: 400px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .message {
-      max-width: 70%;
-      padding: 0.75rem 1rem;
-      border-radius: 15px;
-      line-height: 1.4;
-      font-size: 0.95rem;
-    }
-
-    .user-message {
-      align-self: flex-end;
-      background: var(--primary);
-      color: white;
-    }
-
-    .bot-message {
-      align-self: flex-start;
-      background: #ddd;
-      color: #333;
-    }
-
-    .chat-input {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .chat-input input {
-      flex: 1;
-      padding: 0.75rem;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-
-    .chat-input button {
-      padding: 0.75rem 1.2rem;
-      border: none;
-      background: var(--primary);
-      color: white;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .chat-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .toggle-fullscreen {
-      background: none;
-      border: 1px solid white;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .fullscreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1001;
-      background: white;
-      color: black;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 1rem;
-    }
-
-    .settings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .toggle-group {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #f0f0f0;
-      padding: 0.75rem;
-      border-radius: 10px;
-    }
-
-    .terminal {
-      background: #111;
-      color: #0f0;
-      padding: 1rem;
-      border-radius: 10px;
-      height: 200px;
-      overflow-y: auto;
-      margin-top: 1rem;
-      font-family: monospace;
-    }
-
-    .command-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    .command-btn {
-      background: var(--primary);
-      color: white;
-      padding: 0.4rem 0.8rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .pricing-cards {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .pricing-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      flex: 1;
-      min-width: 250px;
-      max-width: 300px;
-      text-align: center;
-    }
-
-    .pricing-card h3 {
-      color: var(--primary);
-    }
-
-    .bot-cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .bot-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      flex: 1;
-      min-width: 200px;
-      max-width: 250px;
-      text-align: center;
-    }
-
-    .avatar-container {
-      position: relative;
-      width: 150px;
-      height: 150px;
-      margin: 1rem auto;
-    }
-
-    .avatar-part {
-      position: absolute;
-      transition: all 0.3s ease;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: var(--bg-dark);
-      color: white;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      main {
-        flex-direction: column;
-      }
-
-      nav {
-        width: 100%;
-        flex-shrink: 0;
-      }
-
-      .summary-card {
-        flex-direction: column;
-      }
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
     }
   </style>
 </head>
-<body data-intro="Bem-vindo ao ChatBoyAI!" data-intro-position="top">
+<body>
 
-  <header>
-    <div class="logo">ChatBoyAI</div>
-    <div class="user-avatar" title="Usuário">AB</div>
-  </header>
+<header>
+  <h1>Bem-vindo ao ChatBoyAI</h1>
+  <p>Experimente bots inteligentes personalizados para atendimento, segurança, tradução e muito mais.</p>
+</header>
 
-  <main>
-    <nav>
-      <button id="btn-inicio" class="active">Início</button>
-      <button id="btn-chat">Bate-papo</button>
-      <button id="btn-configuracoes">Configurações</button>
-    </nav>
+<section id="como-funciona">
+  <h2 class="section-title">Como Funciona</h2>
+  <p style="text-align:center; margin-top:1rem;">Escolha o bot ideal, personalize sua aparência e aproveite os recursos premium!</p>
+</section>
 
-    <div class="content">
-      <section id="inicio" class="section active">
-        <h2>Início</h2>
-        <div class="summary-card">
-          <div class="summary-item">
-            <h3>Total de mensagens enviadas</h3>
-            <p id="total-msgs">0</p>
-          </div>
-          <div class="summary-item">
-            <h3>Usuários ativos</h3>
-            <p id="usuarios-online">0</p>
-          </div>
-          <div class="summary-item">
-            <h3>Sentimento médio</h3>
-            <p id="sentimento">Neutro</p>
-          </div>
-        </div>
-        <div class="card">
-          <h3>Mensagens por dia</h3>
-          <div class="bar-chart" id="bar-chart">
-            <div class="bar" style="height: 0%"></div>
-            <div class="bar" style="height: 0%"></div>
-            <div class="bar" style="height: 0%"></div>
-            <div class="bar" style="height: 0%"></div>
-            <div class="bar" style="height: 0%"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="chat" class="section">
-        <div class="chat-header">
-          <h2>Bate-papo</h2>
-          <button class="toggle-fullscreen" onclick="toggleFullscreen()">Entrar em Tela Cheia</button>
-        </div>
-        <div class="chat-window" id="chat-window">
-          <!-- Messages will appear here -->
-        </div>
-        <div class="chat-input">
-          <input type="text" id="chat-input" placeholder="Digite sua mensagem..." onkeydown="handleEnter(event)" />
-          <button onclick="sendMessage()">Enviar</button>
-        </div>
-      </section>
-
-      <section id="configuracoes" class="section">
-        <h2>Configurações</h2>
-        <div class="card settings-grid">
-          <div class="toggle-group">
-            <label>Modo Escuro / Claro</label>
-            <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
-          </div>
-          <div class="toggle-group">
-            <label>Fontes</label>
-            <select>
-              <option>Padrão</option>
-              <option>Arial</option>
-              <option>Monospace</option>
-            </select>
-          </div>
-          <div class="toggle-group">
-            <label>Sons de mensagem</label>
-            <input type="checkbox" checked>
-          </div>
-          <div class="toggle-group">
-            <label>Tradução Automática</label>
-            <input type="checkbox">
-          </div>
-          <div class="toggle-group">
-            <label>Mensagens Autodestrutivas</label>
-            <input type="checkbox">
-          </div>
-          <div class="toggle-group">
-            <label>Texto-para-Voz</label>
-            <input type="checkbox">
-          </div>
-          <div class="toggle-group">
-            <label>Central de Comandos</label>
-            <button onclick="openTerminal()">Abrir</button>
-          </div>
-          <div class="toggle-group">
-            <label>Ver Planos Premium</label>
-            <button onclick="showPremiumPlans()">Ver</button>
-          </div>
-        </div>
-
-        <div id="terminal-section" class="card" style="display:none;">
-          <h3>Central de Comandos</h3>
-          <div class="terminal" id="terminal-output">Bem-vindo à Central de Comandos.</div>
-          <div class="command-list">
-            <button class="command-btn" onclick="runCommand('/ajuda')">/ajuda</button>
-            <button class="command-btn" onclick="runCommand('/test')">/test</button>
-            <button class="command-btn" onclick="runCommand('/banir @usuario')">/banir @usuario</button>
-          </div>
-        </div>
-
-        <div id="premium-section" class="card" style="display:none;">
-          <h3>Planos Premium</h3>
-          <div class="pricing-cards">
-            <div class="pricing-card">
-              <h3>Plano Básico</h3>
-              <p>R$9,90/mês</p>
-              <ul>
-                <li>Até 3 bots</li>
-                <li>Respostas médias</li>
-                <li>Personalização básica</li>
-              </ul>
-              <button>Selecionar Plano</button>
-            </div>
-            <div class="pricing-card">
-              <h3>Plano Avançado</h3>
-              <p>R$19,90/mês</p>
-              <ul>
-                <li>Bots ilimitados</li>
-                <li>IA avançada</li>
-                <li>Personalização visual completa</li>
-              </ul>
-              <button>Selecionar Plano</button>
-            </div>
-            <div class="pricing-card">
-              <h3>Plano Empresarial</h3>
-              <p>R$49,90/mês</p>
-              <ul>
-                <li>Tudo do Avançado</li>
-                <li>Suporte prioritário</li>
-                <li>Integrações externas</li>
-              </ul>
-              <button>Selecionar Plano</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Demonstração de Bots</h3>
-          <div class="bot-cards">
-            <div class="bot-card">
-              <h4>Moderação</h4>
-              <p>Gerencia conversas e regras.</p>
-              <button onclick="simulateBotChat('Moderação')">Testar</button>
-            </div>
-            <div class="bot-card">
-              <h4>Atendimento</h4>
-              <p>Suporte rápido e eficiente.</p>
-              <button onclick="simulateBotChat('Atendimento')">Testar</button>
-            </div>
-            <div class="bot-card">
-              <h4>Tradução</h4>
-              <p>Traduz mensagens automaticamente.</p>
-              <button onclick="simulateBotChat('Tradução')">Testar</button>
-            </div>
-            <div class="bot-card">
-              <h4>Trading</h4>
-              <p>Informações sobre criptomoedas.</p>
-              <button onclick="simulateBotChat('Trading')">Testar</button>
-            </div>
-            <div class="bot-card">
-              <h4>Engajamento Social</h4>
-              <p>Promove interações entre usuários.</p>
-              <button onclick="simulateBotChat('Engajamento Social')">Testar</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Personalizar Bot</h3>
-          <div class="avatar-container">
-            <img src="https://placehold.co/150x150?text=Bot" alt="Bot Avatar" class="avatar-part" id="avatar-base" />
-            <img src="https://placehold.co/150x150/FFD700?text=Camisa" alt="Camisa" class="avatar-part" id="avatar-shirt" style="display:none;" />
-            <img src="https://placehold.co/150x150/4682B4?text=Calça" alt="Calça" class="avatar-part" id="avatar-pants" style="display:none;" />
-            <img src="https://placehold.co/150x150/228B22?text=Tênis" alt="Tênis" class="avatar-part" id="avatar-shoes" style="display:none;" />
-            <img src="https://placehold.co/150x150/8A2BE2?text=Chapéu" alt="Chapéu" class="avatar-part" id="avatar-hat" style="display:none;" />
-            <img src="https://placehold.co/150x150/DC143C?text=Óculos" alt="Óculos" class="avatar-part" id="avatar-glasses" style="display:none;" />
-            <img src="https://placehold.co/150x150/FF8C00?text=Mochila" alt="Mochila" class="avatar-part" id="avatar-backpack" style="display:none;" />
-            <img src="https://placehold.co/150x150/00CED1?text=Skin" alt="Skin" class="avatar-part" id="avatar-skin" style="display:none;" />
-          </div>
-          <div class="settings-grid">
-            <div>
-              <h4>Camisas</h4>
-              <button onclick="applyAccessory('shirt')">Adicionar Camisa</button>
-            </div>
-            <div>
-              <h4>Calças</h4>
-              <button onclick="applyAccessory('pants')">Adicionar Calça</button>
-            </div>
-            <div>
-              <h4>Tênis</h4>
-              <button onclick="applyAccessory('shoes')">Adicionar Tênis</button>
-            </div>
-            <div>
-              <h4>Chapéus</h4>
-              <button onclick="applyAccessory('hat')">Adicionar Chapéu</button>
-            </div>
-            <div>
-              <h4>Óculos</h4>
-              <button onclick="applyAccessory('glasses')">Adicionar Óculos</button>
-            </div>
-            <div>
-              <h4>Mochilas</h4>
-              <button onclick="applyAccessory('backpack')">Adicionar Mochila</button>
-            </div>
-            <div>
-              <h4>Skins</h4>
-              <button onclick="applyAccessory('skin')">Adicionar Skin</button>
-            </div>
-          </div>
-          <div style="margin-top: 1rem;">
-            <button onclick="saveStyle()">Salvar Visual</button>
-            <button onclick="resetStyle()">Resetar Estilo</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>InsightAI - Análise Avançada</h3>
-          <canvas id="insight-chart" width="400" height="200"></canvas>
-        </div>
-      </section>
+<section id="menu-nav">
+  <div class="section-title">Explore ChatBoyAI</div>
+  <div class="grid">
+    <div class="card" onclick="scrollToSection('bots')">
+      <div class="icon">🤖</div>
+      <h3>Bots Disponíveis</h3>
     </div>
-  </main>
+    <div class="card" onclick="scrollToSection('configuracoes')">
+      <div class="icon">⚙️</div>
+      <h3>Configurações</h3>
+    </div>
+    <div class="card" onclick="togglePlanos()">
+      <div class="icon">💰</div>
+      <h3>Ver Planos</h3>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <p>© 2025 ChatBoyAI – Todos os direitos reservados</p>
-    <p>
-      <a href="https://discord.gg/9U9WnfF9" target="_blank">Discord</a> | 
-      <a href="#" target="_blank">@chatboyai</a> 
-    </p>
-  </footer>
+<!-- Bots Showcase -->
+<section id="bots">
+  <h2 class="section-title">Nossos Bots</h2>
+  <div class="grid">
+    <div class="bot-card">
+      <div class="icon">🤖</div>
+      <h3>Bot Gratuito Básico</h3>
+      <p>Atendimento simples e rápido.</p>
+      <div class="price">Grátis</div>
+      <button onclick="showSkinSelector('basico')">Personalizar Skin</button>
+    </div>
+    <div class="bot-card">
+      <div class="icon">💼</div>
+      <h3>Bot de Atendimento Premium</h3>
+      <p>Atendimento inteligente com IA avançada.</p>
+      <div class="price">R$49,99/mês</div>
+      <button onclick="showSkinSelector('premium')">Personalizar Skin</button>
+    </div>
+    <div class="bot-card">
+      <div class="icon">🛡️</div>
+      <h3>Bot de Segurança para Discord</h3>
+      <p>Moderador automático e proteção em tempo real.</p>
+      <div class="price">R$89,99/mês</div>
+      <button onclick="showSkinSelector('discord')">Personalizar Skin</button>
+    </div>
+    <div class="bot-card">
+      <div class="icon">🌍</div>
+      <h3>Bot de Tradução Instantânea</h3>
+      <p>Traduz mensagens em tempo real para qualquer idioma.</p>
+      <div class="price">R$149,99/mês</div>
+      <button onclick="showSkinSelector('traducao')">Personalizar Skin</button>
+    </div>
+    <div class="bot-card">
+      <div class="icon">👑</div>
+      <h3>ChatBoy Max</h3>
+      <p>IA completa, automações e personalização total.</p>
+      <div class="price">R$299,99/mês</div>
+      <button onclick="showSkinSelector('max')">Personalizar Skin</button>
+    </div>
+  </div>
+</section>
 
-  <!-- Intro.js JS -->
-  <script src="https://unpkg.com/intro.js/minified/introjs.min.js"></script> 
+<!-- Configurações -->
+<section id="configuracoes">
+  <h2 class="section-title">Configurações</h2>
+  <div class="grid">
+    <div class="config-card" onclick="openSkinCustomizer()">
+      <div class="icon">🎨</div>
+      <h3>Personalizar Bot</h3>
+      <p>Altere a aparência do seu bot com skins exclusivas.</p>
+    </div>
+    <div class="config-card" onclick="openIntelligenceDashboard()">
+      <div class="icon">📊</div>
+      <h3>Central de Inteligência</h3>
+      <p>Veja estatísticas e habilidades dos seus bots.</p>
+    </div>
+    <div class="config-card" onclick="toggleTestArea()">
+      <div class="icon">🧪</div>
+      <h3>Testar Bots</h3>
+      <p>Experimente um bot por 30 segundos gratuitamente.</p>
+    </div>
+    <div class="config-card" onclick="toggleCombos()">
+      <div class="icon">🎁</div>
+      <h3>Pacotes de Bots</h3>
+      <p>Compre combos com desconto especial.</p>
+    </div>
+    <div class="config-card" onclick="togglePlanos()">
+      <div class="icon">💳</div>
+      <h3>Ver Planos Premium</h3>
+      <p>Compare e assine planos com benefícios exclusivos.</p>
+    </div>
+  </div>
+</section>
 
-  <script>
-    const sections = ['inicio', 'chat', 'configuracoes'];
-    const buttons = ['btn-inicio', 'btn-chat', 'btn-configuracoes'];
+<!-- Central de Inteligência -->
+<section id="intelligence-dashboard" style="display:none;">
+  <h2 class="section-title">Central de Inteligência dos Bots</h2>
+  <div class="grid">
+    <div class="dashboard-card">
+      <h3>Bot de Atendimento</h3>
+      <p><strong>Personalidade:</strong> gentil, rápido e preciso</p>
+      <p>Nível de IA: ★★★★☆</p>
+      <p>Velocidade de Resposta: 0.3s</p>
+      <p>Energia Usada: 45%</p>
+    </div>
+    <div class="dashboard-card">
+      <h3>Bot de Segurança</h3>
+      <p><strong>Personalidade:</strong> rígido, focado em segurança</p>
+      <p>Nível de IA: ★★★★☆</p>
+      <p>Velocidade de Resposta: 0.5s</p>
+      <p>Energia Usada: 60%</p>
+    </div>
+    <div class="dashboard-card">
+      <h3>Bot de Tradução</h3>
+      <p><strong>Personalidade:</strong> multilíngue e detalhista</p>
+      <p>Nível de IA: ★★★★★</p>
+      <p>Velocidade de Resposta: 0.6s</p>
+      <p>Energia Usada: 70%</p>
+    </div>
+  </div>
+</section>
 
-    function showSection(id) {
-      // Hide all sections
-      sections.forEach(sec => {
-        document.getElementById(sec).classList.remove('active');
-      });
-      // Remove active from all buttons
-      buttons.forEach(btn => {
-        document.getElementById(btn).classList.remove('active');
-      });
-      // Show current section and highlight button
-      document.getElementById(id).classList.add('active');
-      document.getElementById(`btn-${id}`).classList.add('active');
-    }
+<!-- Pacotes de Bots -->
+<section id="combo-section" style="display:none;">
+  <h2 class="section-title">Pacotes de Bots</h2>
+  <div class="grid">
+    <div class="combo-card">
+      <h3>Pacote Profissional</h3>
+      <p>Inclui: Moderação + Atendimento + Tradutor</p>
+      <p>Preço individual: R$289,97</p>
+      <p><strong>Preço combo:</strong> R$239,99</p>
+      <button onclick="subscribeCombo('Profissional')">Assinar Combo</button>
+    </div>
+    <div class="combo-card">
+      <h3>Pacote Gamer</h3>
+      <p>Inclui: Skin + Suporte Rápido</p>
+      <p>Preço individual: R$129,99</p>
+      <p><strong>Preço combo:</strong> R$99,99</p>
+      <button onclick="subscribeCombo('Gamer')">Assinar Combo</button>
+    </div>
+  </div>
+</section>
 
-    // Attach click handlers
-    document.getElementById('btn-inicio').addEventListener('click', () => showSection('inicio'));
-    document.getElementById('btn-chat').addEventListener('click', () => showSection('chat'));
-    document.getElementById('btn-configuracoes').addEventListener('click', () => showSection('configuracoes'));
+<!-- Área de Testes Grátis -->
+<section id="test-area" style="display:none;">
+  <h2 class="section-title">Área de Testes Grátis</h2>
+  <div class="test-area">
+    <h3>Tente um bot por 30 segundos</h3>
+    <div class="chat-box" id="chatBox">
+      <p><strong>Bot:</strong> Olá! Como posso ajudar?</p>
+    </div>
+    <input type="text" placeholder="Digite uma mensagem..." onkeydown="handleMessage(event)" style="width:100%; padding:0.5rem; border-radius:6px; border:none;" disabled id="testInput"/>
+    <div class="timer" id="timer">Tempo restante: 30s</div>
+  </div>
+</section>
 
-    // Dashboard stats
-    let totalMsgs = 0;
-    function updateDashboard() {
-      document.getElementById('total-msgs').textContent = totalMsgs;
-      document.getElementById('usuarios-online').textContent = Math.floor(Math.random() * 20) + 1;
-      const sentiment = ['Positivo', 'Neutro', 'Negativo'][Math.floor(Math.random() * 3)];
-      document.getElementById('sentimento').textContent = sentiment;
+<!-- Planos Section -->
+<section id="planos-section" style="display:none;">
+  <h2 class="section-title">Planos Disponíveis</h2>
+  <div class="grid">
+    <div class="plan-card">
+      <h3>Bot Gratuito Básico</h3>
+      <div class="price">Grátis</div>
+      <ul style="list-style:none; padding:0;">
+        <li>✔ Atendimento básico</li>
+        <li>✖ Suporte técnico</li>
+        <li>✖ Personalização</li>
+      </ul>
+      <button disabled>Já assinado</button>
+    </div>
+    <div class="plan-card">
+      <h3>Bot de Atendimento Premium</h3>
+      <div class="price">R$49,99/mês</div>
+      <ul style="list-style:none; padding:0;">
+        <li>✔ IA Avançada</li>
+        <li>✔ Suporte Técnico</li>
+        <li>✖ Personalização Completa</li>
+      </ul>
+      <button onclick="subscribe('Premium')">Assinar</button>
+    </div>
+    <div class="plan-card">
+      <h3>Bot de Segurança para Discord</h3>
+      <div class="price">R$89,99/mês</div>
+      <ul style="list-style:none; padding:0;">
+        <li>✔ Moderação Automática</li>
+        <li>✔ Proteção contra spam</li>
+        <li>✖ Acesso ao Dashboard</li>
+      </ul>
+      <button onclick="subscribe('Discord')">Assinar</button>
+    </div>
+    <div class="plan-card">
+      <h3>Bot de Tradução Instantânea</h3>
+      <div class="price">R$149,99/mês</div>
+      <ul style="list-style:none; padding:0;">
+        <li>✔ Tradução em Tempo Real</li>
+        <li>✔ Suporte Multilíngue</li>
+        <li>✖ Integração Avançada</li>
+      </ul>
+      <button onclick="subscribe('Tradução')">Assinar</button>
+    </div>
+    <div class="plan-card">
+      <h3>ChatBoy Max</h3>
+      <div class="price">R$299,99/mês</div>
+      <ul style="list-style:none; padding:0;">
+        <li>✔ Todos os Recursos</li>
+        <li>✔ Suporte VIP</li>
+        <li>✔ Personalização Total</li>
+      </ul>
+      <button onclick="subscribe('Max')">Assinar</button>
+    </div>
+  </div>
+</section>
 
-      const bars = document.querySelectorAll('.bar');
-      bars.forEach(bar => {
-        const height = Math.random() * 100;
-        bar.style.height = `${height}%`;
-      });
-    }
+<!-- Skin Selector -->
+<div id="skin-selector" style="display:none; text-align:center; padding:2rem;">
+  <h3>Selecione uma Skin</h3>
+  <div class="skin-selection">
+    <img src="https://placehold.co/80x80/FF5733/FFFFFF?text=Casual" class="skin-option" onclick="selectSkin(this)" alt="Casual" title="Casual – Simples e elegante">
+    <img src="https://placehold.co/80x80/33C1FF/FFFFFF?text=Tech" class="skin-option" onclick="selectSkin(this)" alt="Tech" title="Tech – Moderno e futurista">
+    <img src="https://placehold.co/80x80/33FF57/FFFFFF?text=Neon" class="skin-option" onclick="selectSkin(this)" alt="Neon" title="Neon – Brilhante e energético">
+    <img src="https://placehold.co/80x80/FFD700/FFFFFF?text=Luxo" class="skin-option" onclick="selectSkin(this)" alt="Luxo" title="Luxo – Elegante e sofisticado">
+    <img src="https://placehold.co/80x80/800080/FFFFFF?text=Gothic" class="skin-option" onclick="selectSkin(this)" alt="Gótico" title="Gótico – Místico e único">
+  </div>
+</div>
 
-    setInterval(updateDashboard, 5000);
-    updateDashboard();
+<button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullScreen()">Sair da Tela Cheia</button>
 
-    // Chat logic
-    function sendMessage() {
-      const input = document.getElementById('chat-input');
-      const message = input.value.trim();
-      if (!message) return;
+<script>
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  }
 
-      addMessage(message, 'user');
-      input.value = '';
-      totalMsgs++;
-      updateDashboard();
+  function togglePlanos() {
+    const planos = document.getElementById("planos-section");
+    planos.style.display = (planos.style.display === "none") ? "block" : "none";
+  }
 
-      setTimeout(() => {
-        const replies = [
-          "Entendi! Como posso ajudar?",
-          "Essa é uma ótima pergunta!",
-          "Vamos verificar isso para você.",
-          "Hmm... pensando...",
-          "Preciso de mais detalhes."
-        ];
-        addMessage(replies[Math.floor(Math.random() * replies.length)], 'bot');
-      }, 1000);
-    }
+  function openSkinCustomizer() {
+    document.getElementById("skin-selector").style.display = "block";
+  }
 
-    function addMessage(text, type) {
-      const chatWindow = document.getElementById('chat-window');
-      const msgDiv = document.createElement('div');
-      msgDiv.classList.add('message');
-      msgDiv.classList.add(type === 'user' ? 'user-message' : 'bot-message');
-      msgDiv.textContent = text;
-      chatWindow.appendChild(msgDiv);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
+  function selectSkin(el) {
+    document.querySelectorAll(".skin-option").forEach(img => img.classList.remove("selected"));
+    el.classList.add("selected");
+    alert("Skin selecionada aplicada!");
+  }
 
-    function handleEnter(e) {
-      if (e.key === 'Enter') sendMessage();
-    }
+  function subscribe(plan) {
+    alert(`Você assinou o plano ${plan}!`);
+  }
 
-    // Fullscreen toggle
-    function toggleFullscreen() {
-      const chatSection = document.getElementById('chat');
-      const btn = document.querySelector('.toggle-fullscreen');
-      if (!document.fullscreenElement) {
-        chatSection.classList.add('fullscreen');
-        btn.textContent = 'Sair da Tela Cheia';
+  function subscribeCombo(combo) {
+    alert(`Você comprou o pacote "${combo}"!`);
+  }
+
+  function openIntelligenceDashboard() {
+    document.getElementById("intelligence-dashboard").style.display = "block";
+    window.location.hash = "#intelligence-dashboard"; 
+  }
+
+  function toggleCombos() {
+    document.getElementById("combo-section").style.display = "block";
+    window.location.hash = "#combo-section";
+  }
+
+  let timerInterval;
+  let timeLeft = 30;
+
+  function startTestTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 30;
+    document.getElementById("timer").innerText = `Tempo restante: ${timeLeft}s`;
+    document.getElementById("testInput").disabled = false;
+    document.getElementById("testInput").focus();
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        document.getElementById("testInput").disabled = true;
+        document.getElementById("chatBox").innerHTML += `<p><strong>Sistema:</strong> Tempo esgotado. Assine para continuar usando.</p>`;
+        document.getElementById("timer").innerText = "Teste concluído.";
+        document.getElementById("testInput").value = "";
       } else {
-        chatSection.classList.remove('fullscreen');
-        btn.textContent = 'Entrar em Tela Cheia';
+        document.getElementById("timer").innerText = `Tempo restante: ${timeLeft}s`;
+      }
+    }, 1000);
+  }
+
+  function handleMessage(e) {
+    if (e.key === 'Enter') {
+      const input = document.getElementById("testInput");
+      const chatBox = document.getElementById("chatBox");
+      const msg = input.value.trim();
+      if (msg !== "") {
+        chatBox.innerHTML += `<p><strong>Você:</strong> ${msg}</p>`;
+        setTimeout(() => {
+          chatBox.innerHTML += `<p><strong>Bot:</strong> Estou aqui para ajudar você!</p>`;
+        }, 500);
+        input.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
+  }
+
+  function toggleTestArea() {
+    document.getElementById("test-area").style.display = "block";
+    startTestTimer();
+  }
+
+  function toggleFullScreen() {
+    const btn = document.getElementById("fullscreenBtn");
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      btn.innerText = "Sair da Tela Cheia";
+      btn.style.display = "block";
+    } else {
+      if (document.exitFullscreen) {
         document.exitFullscreen();
       }
+      btn.style.display = "none";
     }
+  }
 
-    // Dark mode toggle
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
+  document.addEventListener("fullscreenchange", () => {
+    const btn = document.getElementById("fullscreenBtn");
+    if (!document.fullscreenElement) {
+      btn.style.display = "none";
     }
-
-    // Terminal simulation
-    function openTerminal() {
-      document.getElementById('terminal-section').style.display = 'block';
-    }
-
-    function runCommand(cmd) {
-      const output = document.getElementById('terminal-output');
-      output.innerHTML += `<br>> ${cmd}<br>`;
-      if (cmd === '/ajuda') {
-        output.innerHTML += 'Comandos disponíveis: /ajuda, /test, /banir @usuario<br>';
-      } else if (cmd === '/test') {
-        output.innerHTML += 'Sistema funcionando normalmente.<br>';
-      } else if (cmd.startsWith('/banir')) {
-        const user = cmd.split('@')[1];
-        output.innerHTML += `Usuário @${user} banido com sucesso.<br>`;
-      }
-      output.scrollTop = output.scrollHeight;
-    }
-
-    // Show premium plans
-    function showPremiumPlans() {
-      document.getElementById('premium-section').style.display = 'block';
-    }
-
-    // Avatar customization
-    function applyAccessory(part) {
-      const el = document.getElementById(`avatar-${part}`);
-      el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function saveStyle() {
-      alert("Visual salvo com sucesso!");
-    }
-
-    function resetStyle() {
-      document.querySelectorAll('.avatar-part').forEach(el => {
-        if (el.id !== 'avatar-base') el.style.display = 'none';
-      });
-    }
-
-    function simulateBotChat(botName) {
-      alert(`Simulando chat com o bot "${botName}"`);
-    }
-
-    // ChartJS for InsightAI
-    const ctx = document.getElementById('insight-chart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        datasets: [{
-          label: 'Análise de Mensagens',
-          data: [12, 19, 3, 5, 2],
-          borderColor: '#6C47FF',
-          fill: false,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-
-    // Intro tour
-    window.onload = function() {
-      introJs().setOptions({
-        tooltipPosition: 'auto',
-        buttons: ['prev', 'next', 'done'],
-        prevLabel: 'Voltar',
-        nextLabel: 'Próximo',
-        doneLabel: 'Entendi',
-        tooltipClass: 'introjs-tooltip',
-        highlightClass: 'introjs-highlight',
-        exitOnOverlayClick: false,
-        showProgress: true
-      }).start();
-    };
-  </script>
+  });
+</script>
 </body>
 </html>
