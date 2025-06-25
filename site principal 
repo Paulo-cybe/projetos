@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ChatBoyAI - Bots Inteligentes para Você</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"  integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
       --primary: #4A90E2;
@@ -34,6 +33,43 @@
       overflow-x: hidden;
     }
 
+    /* Navigation Bar */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    nav .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    nav .menu {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav .menu a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav .menu a:hover {
+      color: var(--accent);
+    }
+
     header {
       height: 100vh;
       display: flex;
@@ -44,6 +80,7 @@
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       position: relative;
       overflow: hidden;
+      padding: 2rem;
     }
 
     header::before {
@@ -56,19 +93,15 @@
     }
 
     header h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin-bottom: 1rem;
-      position: relative;
-      z-index: 1;
       animation: fadeInUp 1s ease-out forwards;
     }
 
     header p {
-      font-size: 1.2rem;
+      font-size: 1rem;
       max-width: 600px;
       opacity: 0.9;
-      position: relative;
-      z-index: 1;
       animation: fadeInUp 1.5s ease-out forwards;
     }
 
@@ -97,7 +130,6 @@
       background: var(--accent);
     }
 
-    .menu-nav,
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -136,35 +168,6 @@
       background: var(--hover-bg);
     }
 
-    .card::before,
-    .config-card::before,
-    .plan-card::before,
-    .bot-card::before,
-    .combo-card::before,
-    .dashboard-card::before,
-    .test-area::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(0,255,224,0.05) 0%, transparent 60%);
-      transition: var(--transition);
-      pointer-events: none;
-    }
-
-    .card:hover::before,
-    .config-card:hover::before,
-    .plan-card:hover::before,
-    .bot-card:hover::before,
-    .combo-card:hover::before,
-    .dashboard-card:hover::before,
-    .test-area:hover::before {
-      top: -30%;
-      left: -30%;
-    }
-
     .icon {
       font-size: 3rem;
       margin-bottom: 1rem;
@@ -175,13 +178,6 @@
       font-size: 1.2rem;
       color: green;
       margin-top: 1rem;
-    }
-
-    .config-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
     }
 
     button {
@@ -280,49 +276,86 @@
       color: orange;
     }
 
-    .active-button {
-      background: var(--accent);
-      color: black;
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1002;
+      display: none;
     }
 
-    @keyframes fadeInUp {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--hover-bg);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      z-index: 1002;
+      display: none;
+      animation: fadeOut 2s forwards;
+    }
+
+    @keyframes fadeOut {
+      from {opacity: 1;}
+      to {opacity: 0; visibility: hidden;}
+    }
+
+    .active-section {
+      display: block !important;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: red;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      header p {
+        font-size: 0.9rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
+
+<nav>
+  <div class="logo">ChatBoyAI</div>
+  <div class="menu">
+    <a href="#bots" onclick="showSection('bots')">Bots</a>
+    <a href="#configuracoes" onclick="showSection('configuracoes')">Configurações</a>
+    <a href="#planos-section" onclick="showSection('planos-section')">Planos</a>
+  </div>
+</nav>
 
 <header>
   <h1>Bem-vindo ao ChatBoyAI</h1>
   <p>Experimente bots inteligentes personalizados para atendimento, segurança, tradução e muito mais.</p>
 </header>
 
-<section id="como-funciona">
-  <h2 class="section-title">Como Funciona</h2>
-  <p style="text-align:center; margin-top:1rem;">Escolha o bot ideal, personalize sua aparência e aproveite os recursos premium!</p>
-</section>
-
-<section id="menu-nav">
-  <div class="section-title">Explore ChatBoyAI</div>
-  <div class="grid">
-    <div class="card" onclick="scrollToSection('bots')">
-      <div class="icon">🤖</div>
-      <h3>Bots Disponíveis</h3>
-    </div>
-    <div class="card" onclick="scrollToSection('configuracoes')">
-      <div class="icon">⚙️</div>
-      <h3>Configurações</h3>
-    </div>
-    <div class="card" onclick="togglePlanos()">
-      <div class="icon">💰</div>
-      <h3>Ver Planos</h3>
-    </div>
-  </div>
-</section>
-
-<!-- Bots Showcase -->
-<section id="bots">
+<section id="bots" class="section">
   <h2 class="section-title">Nossos Bots</h2>
   <div class="grid">
     <div class="bot-card">
@@ -364,7 +397,7 @@
 </section>
 
 <!-- Configurações -->
-<section id="configuracoes">
+<section id="configuracoes" class="section">
   <h2 class="section-title">Configurações</h2>
   <div class="grid">
     <div class="config-card" onclick="openSkinCustomizer()">
@@ -396,7 +429,7 @@
 </section>
 
 <!-- Central de Inteligência -->
-<section id="intelligence-dashboard" style="display:none;">
+<section id="intelligence-dashboard" class="section">
   <h2 class="section-title">Central de Inteligência dos Bots</h2>
   <div class="grid">
     <div class="dashboard-card">
@@ -424,7 +457,7 @@
 </section>
 
 <!-- Pacotes de Bots -->
-<section id="combo-section" style="display:none;">
+<section id="combo-section" class="section">
   <h2 class="section-title">Pacotes de Bots</h2>
   <div class="grid">
     <div class="combo-card">
@@ -445,7 +478,7 @@
 </section>
 
 <!-- Área de Testes Grátis -->
-<section id="test-area" style="display:none;">
+<section id="test-area" class="section">
   <h2 class="section-title">Área de Testes Grátis</h2>
   <div class="test-area">
     <h3>Tente um bot por 30 segundos</h3>
@@ -454,11 +487,12 @@
     </div>
     <input type="text" placeholder="Digite uma mensagem..." onkeydown="handleMessage(event)" style="width:100%; padding:0.5rem; border-radius:6px; border:none;" disabled id="testInput"/>
     <div class="timer" id="timer">Tempo restante: 30s</div>
+    <button onclick="restartTest()">Reiniciar Teste</button>
   </div>
 </section>
 
 <!-- Planos Section -->
-<section id="planos-section" style="display:none;">
+<section id="planos-section" class="section">
   <h2 class="section-title">Planos Disponíveis</h2>
   <div class="grid">
     <div class="plan-card">
@@ -515,8 +549,8 @@
 </section>
 
 <!-- Skin Selector -->
-<div id="skin-selector" style="display:none; text-align:center; padding:2rem;">
-  <h3>Selecione uma Skin</h3>
+<div id="skin-selector" class="section" style="display: none;">
+  <h2 class="section-title">Selecione uma Skin</h2>
   <div class="skin-selection">
     <img src="https://placehold.co/80x80/FF5733/FFFFFF?text=Casual" class="skin-option" onclick="selectSkin(this)" alt="Casual" title="Casual – Simples e elegante">
     <img src="https://placehold.co/80x80/33C1FF/FFFFFF?text=Tech" class="skin-option" onclick="selectSkin(this)" alt="Tech" title="Tech – Moderno e futurista">
@@ -524,112 +558,126 @@
     <img src="https://placehold.co/80x80/FFD700/FFFFFF?text=Luxo" class="skin-option" onclick="selectSkin(this)" alt="Luxo" title="Luxo – Elegante e sofisticado">
     <img src="https://placehold.co/80x80/800080/FFFFFF?text=Gothic" class="skin-option" onclick="selectSkin(this)" alt="Gótico" title="Gótico – Místico e único">
   </div>
+  <button onclick="closeSkinSelector()">Fechar</button>
 </div>
 
 <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullScreen()">Sair da Tela Cheia</button>
 
+<!-- Notification Modal -->
+<div class="notification" id="notification"></div>
+
 <script>
-  function scrollToSection(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  }
+  window.ChatBoyAI = {
+    sections: ['bots', 'configuracoes', 'intelligence-dashboard', 'combo-section', 'test-area', 'planos-section', 'skin-selector'],
+    timerInterval: null,
+    timeLeft: 30,
+    activeSkin: '',
+    skinPreview: null,
 
-  function togglePlanos() {
-    const planos = document.getElementById("planos-section");
-    planos.style.display = (planos.style.display === "none") ? "block" : "none";
-  }
+    showSection(id) {
+      this.sections.forEach(sec => document.getElementById(sec).style.display = sec === id ? 'block' : 'none');
+    },
 
-  function openSkinCustomizer() {
-    document.getElementById("skin-selector").style.display = "block";
-  }
+    toggleSection(id) {
+      const el = document.getElementById(id);
+      this.sections.filter(s => s !== id).forEach(s => document.getElementById(s).style.display = 'none');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    },
 
-  function selectSkin(el) {
-    document.querySelectorAll(".skin-option").forEach(img => img.classList.remove("selected"));
-    el.classList.add("selected");
-    alert("Skin selecionada aplicada!");
-  }
+    openSkinCustomizer() {
+      this.toggleSection('skin-selector');
+    },
+    openIntelligenceDashboard() {
+      this.toggleSection('intelligence-dashboard');
+    },
+    toggleCombos() {
+      this.toggleSection('combo-section');
+    },
+    toggleTestArea() {
+      this.toggleSection('test-area');
+      this.startTestTimer();
+    },
+    togglePlanos() {
+      this.toggleSection('planos-section');
+    },
+    closeSkinSelector() {
+      this.toggleSection('skin-selector');
+    },
+    selectSkin(el) {
+      document.querySelectorAll(".skin-option").forEach(img => img.classList.remove("selected"));
+      el.classList.add("selected");
+      this.showNotification("Skin selecionada aplicada!");
+    },
+    subscribe(plan) {
+      this.showNotification(`Você assinou o plano ${plan}!`);
+    },
+    subscribeCombo(combo) {
+      this.showNotification(`Você comprou o pacote "${combo}"!`);
+    },
+    startTestTimer() {
+      if (document.getElementById('test-area').style.display !== 'block') return;
+      clearInterval(this.timerInterval);
+      this.timeLeft = 30;
+      document.getElementById("timer").innerText = `Tempo restante: ${this.timeLeft}s`;
+      document.getElementById("testInput").disabled = false;
+      document.getElementById("testInput").focus();
 
-  function subscribe(plan) {
-    alert(`Você assinou o plano ${plan}!`);
-  }
-
-  function subscribeCombo(combo) {
-    alert(`Você comprou o pacote "${combo}"!`);
-  }
-
-  function openIntelligenceDashboard() {
-    document.getElementById("intelligence-dashboard").style.display = "block";
-    window.location.hash = "#intelligence-dashboard"; 
-  }
-
-  function toggleCombos() {
-    document.getElementById("combo-section").style.display = "block";
-    window.location.hash = "#combo-section";
-  }
-
-  let timerInterval;
-  let timeLeft = 30;
-
-  function startTestTimer() {
-    clearInterval(timerInterval);
-    timeLeft = 30;
-    document.getElementById("timer").innerText = `Tempo restante: ${timeLeft}s`;
-    document.getElementById("testInput").disabled = false;
-    document.getElementById("testInput").focus();
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        document.getElementById("testInput").disabled = true;
-        document.getElementById("chatBox").innerHTML += `<p><strong>Sistema:</strong> Tempo esgotado. Assine para continuar usando.</p>`;
-        document.getElementById("timer").innerText = "Teste concluído.";
-        document.getElementById("testInput").value = "";
+      this.timerInterval = setInterval(() => {
+        this.timeLeft--;
+        if (this.timeLeft <= 0) {
+          clearInterval(this.timerInterval);
+          document.getElementById("testInput").disabled = true;
+          document.getElementById("chatBox").innerHTML += `<p><strong>Sistema:</strong> Tempo esgotado. Assine para continuar usando.</p>`;
+          document.getElementById("timer").innerText = "Teste concluído.";
+          document.getElementById("testInput").value = "";
+        } else {
+          document.getElementById("timer").innerText = `Tempo restante: ${this.timeLeft}s`;
+        }
+      }, 1000);
+    },
+    restartTest() {
+      this.startTestTimer();
+      document.getElementById("chatBox").innerHTML = `<p><strong>Bot:</strong> Olá! Como posso ajudar?</p>`;
+    },
+    handleMessage(e) {
+      if (e.key === 'Enter') {
+        const input = document.getElementById("testInput");
+        const chatBox = document.getElementById("chatBox");
+        const msg = input.value.trim();
+        if (msg) {
+          chatBox.innerHTML += `<p><strong>Você:</strong> ${msg}</p>`;
+          setTimeout(() => {
+            chatBox.innerHTML += `<p><strong>Bot:</strong> Estou aqui para ajudar você!</p>`;
+          }, 500);
+          input.value = "";
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }
+    },
+    toggleFullScreen() {
+      const btn = document.getElementById("fullscreenBtn");
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        btn.innerText = "Sair da Tela Cheia";
+        btn.style.display = "block";
       } else {
-        document.getElementById("timer").innerText = `Tempo restante: ${timeLeft}s`;
+        if (document.exitFullscreen) document.exitFullscreen();
+        btn.style.display = "none";
       }
-    }, 1000);
-  }
-
-  function handleMessage(e) {
-    if (e.key === 'Enter') {
-      const input = document.getElementById("testInput");
-      const chatBox = document.getElementById("chatBox");
-      const msg = input.value.trim();
-      if (msg !== "") {
-        chatBox.innerHTML += `<p><strong>Você:</strong> ${msg}</p>`;
-        setTimeout(() => {
-          chatBox.innerHTML += `<p><strong>Bot:</strong> Estou aqui para ajudar você!</p>`;
-        }, 500);
-        input.value = "";
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
+    },
+    showNotification(message) {
+      const notif = document.getElementById("notification");
+      notif.innerText = message;
+      notif.style.display = 'block';
+      setTimeout(() => {
+        notif.style.display = 'none';
+      }, 2000);
     }
-  }
+  };
 
-  function toggleTestArea() {
-    document.getElementById("test-area").style.display = "block";
-    startTestTimer();
-  }
-
-  function toggleFullScreen() {
-    const btn = document.getElementById("fullscreenBtn");
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      btn.innerText = "Sair da Tela Cheia";
-      btn.style.display = "block";
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-      btn.style.display = "none";
-    }
-  }
-
-  document.addEventListener("fullscreenchange", () => {
-    const btn = document.getElementById("fullscreenBtn");
-    if (!document.fullscreenElement) {
-      btn.style.display = "none";
-    }
-  });
-</script>
-</body>
-</html>
+  // Attach global functions for HTML
+  window.showSection = id => ChatBoyAI.showSection(id);
+  window.openSkinCustomizer = () => ChatBoyAI.openSkinCustomizer();
+  window.openIntelligenceDashboard = () => ChatBoyAI.openIntelligenceDashboard();
+  window.toggleCombos = () => ChatBoyAI.toggleCombos();
+  window.toggleTestArea = () => ChatBoyAI.toggleT
