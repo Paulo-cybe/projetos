@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatBoy Custom</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #6366f1;
+      --bg: #0f172a;
+      --text: #f8fafc;
+      --accent: #8b5cf6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .cta-button {
+      padding: 1rem 2rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .cta-button:hover {
+      transform: scale(1.05);
+      background: #7c3aed;
+    }
+
+    section#customization {
+      padding: 4rem 2rem;
+      background-color: var(--bg);
+    }
+
+    .bot-preview {
+      width: 200px;
+      height: 300px;
+      margin: 0 auto 2rem;
+      position: relative;
+      background-image: url('https://placehold.co/200x300'); 
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+      transition: all 0.5s ease-in-out;
+      animation: spin 5s infinite linear;
+    }
+
+    @keyframes spin {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .tab {
+      background: #1e293b;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .tab:hover, .tab.active {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .items {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .item {
+      background: #1e293b;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .item:hover {
+      transform: scale(1.05);
+      background: var(--primary);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .action-btn {
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    footer {
+      background: #1e293b;
+      padding: 2rem 1rem;
+      text-align: center;
+      position: relative;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #a855f7;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .bot-preview {
+        width: 150px;
+        height: 225px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="inicio">
+    <h1>Customize seu Bot com Estilo</h1>
+    <p>Liberte a personalidade visual do seu ChatBoyAI</p>
+    <button class="cta-button" onclick="document.getElementById('customization').scrollIntoView({ behavior: 'smooth' })">Começar Customização</button>
+  </header>
+
+  <section id="customization">
+    <div class="bot-preview" id="botPreview"></div>
+
+    <div class="tabs">
+      <div class="tab active" data-category="camisa">Camisas / Blusas 👕</div>
+      <div class="tab" data-category="calca">Calças 👖</div>
+      <div class="tab" data-category="tenis">Tênis 👟</div>
+      <div class="tab" data-category="chapeu">Chapéus / Bonés 🧢</div>
+      <div class="tab" data-category="oculos">Óculos 🕶</div>
+      <div class="tab" data-category="mochila">Mochilas 🎒</div>
+      <div class="tab" data-category="skin">Skins Especiais 💫</div>
+    </div>
+
+    <div class="items" id="itemList"></div>
+
+    <div class="actions">
+      <button class="action-btn" onclick="saveStyle()">Salvar Visual</button>
+      <button class="action-btn" onclick="resetStyle()">Resetar Estilo</button>
+      <button class="action-btn" onclick="randomizeStyle()">Aleatorizar Visual</button>
+      <button class="action-btn" onclick="window.location.href='#inicio'">Voltar ao Painel</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>Redes Sociais:</p>
+    <p>
+      <a href="https://discord.gg/9U9WnfF9"  target="_blank">Discord</a> | 
+      <a href="https://instagram.com/chatboyai"  target="_blank">@chatboyai</a>
+    </p>
+  </footer>
+
+  <script>
+    const categories = {
+      camisa: [
+        "https://placehold.co/200x300/e11d48/FFFFFF?text=Camisa+Vermelha",
+        "https://placehold.co/200x300/0ea5e9/FFFFFF?text=Camisa+Azul",
+        "https://placehold.co/200x300/10b981/FFFFFF?text=Camisa+Verde"
+      ],
+      calca: [
+        "https://placehold.co/200x300/3b82f6/FFFFFF?text=Calça+Jeans",
+        "https://placehold.co/200x300/fbbf24/FFFFFF?text=Calça+Cinza",
+        "https://placehold.co/200x300/6b7280/FFFFFF?text=Calça+Preta"
+      ],
+      tenis: [
+        "https://placehold.co/200x300/ef4444/FFFFFF?text=Tênis+Vermelho",
+        "https://placehold.co/200x300/6d28d9/FFFFFF?text=Tênis+Roxo",
+        "https://placehold.co/200x300/8b5cf6/FFFFFF?text=Tênis+Neon"
+      ],
+      chapeu: [
+        "https://placehold.co/200x300/000000/FFFFFF?text=Boné+Preto",
+        "https://placehold.co/200x300/22c55e/FFFFFF?text=Chapéu+Verde",
+        "https://placehold.co/200x300/f97316/FFFFFF?text=Chapéu+Laranja"
+      ],
+      oculos: [
+        "https://placehold.co/200x300/374151/FFFFFF?text=Óculos+Clássico",
+        "https://placehold.co/200x300/9333ea/FFFFFF?text=Óculos+Estiloso",
+        "https://placehold.co/200x300/7e22ce/FFFFFF?text=Óculos+Futurista"
+      ],
+      mochila: [
+        "https://placehold.co/200x300/1e40af/FFFFFF?text=Mochila+Azul",
+        "https://placehold.co/200x300/9d174d/FFFFFF?text=Mochila+Rosa",
+        "https://placehold.co/200x300/064e3b/FFFFFF?text=Mochila+Verde+Escuro"
+      ],
+      skin: [
+        "https://placehold.co/200x300/fc47dd/FFFFFF?text=Skin+Rosa",
+        "https://placehold.co/200x300/00ffcc/FFFFFF?text=Skin+Ciano",
+        "https://placehold.co/200x300/ffd700/FFFFFF?text=Skin+Dourada"
+      ]
+    };
+
+    let currentCategory = "camisa";
+    let currentStyles = {};
+
+    function renderItems(category) {
+      const container = document.getElementById("itemList");
+      container.innerHTML = "";
+      categories[category].forEach((url, index) => {
+        const item = document.createElement("div");
+        item.className = "item";
+        item.style.backgroundImage = `url('${url}')`;
+        item.style.backgroundSize = "cover";
+        item.style.color = "transparent";
+        item.onclick = () => applyItem(url);
+        container.appendChild(item);
+      });
+    }
+
+    function applyItem(url) {
+      currentStyles[currentCategory] = url;
+      updateBot();
+    }
+
+    function updateBot() {
+      const bot = document.getElementById("botPreview");
+      const overlay = Object.values(currentStyles).join(", ");
+      bot.style.backgroundImage = overlay ? overlay : "url('https://placehold.co/200x300')";
+      bot.style.animation = "none";
+      void bot.offsetWidth; // Trigger reflow
+      bot.style.animation = "spin 5s infinite linear";
+    }
+
+    function saveStyle() {
+      alert("Visual salvo com sucesso!");
+    }
+
+    function resetStyle() {
+      currentStyles = {};
+      updateBot();
+    }
+
+    function randomizeStyle() {
+      for (let cat in categories) {
+        const items = categories[cat];
+        currentStyles[cat] = items[Math.floor(Math.random() * items.length)];
+      }
+      updateBot();
+    }
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        currentCategory = tab.dataset.category;
+        renderItems(currentCategory);
+      });
+    });
+
+    renderItems(currentCategory);
+  </script>
+</body>
+</html>
