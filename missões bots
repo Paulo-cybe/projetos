@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Desafios Semanais - ChatBoyAI</title>
+  <style>
+    :root {
+      --primary: #6c63ff;
+      --secondary: #764ba2;
+      --bg: #121212;
+      --text-light: #f5f5f5;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --accent: #ffd700;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--text-light);
+    }
+
+    h1, h2, h3 {
+      font-weight: 600;
+    }
+
+    .gradient-hero {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gradient-hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .gradient-hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .btn-scroll {
+      display: inline-block;
+      padding: 12px 24px;
+      background: white;
+      color: var(--primary);
+      border-radius: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-scroll:hover {
+      transform: translateY(-5px);
+    }
+
+    .floating-circle {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: floatCircle 8s infinite ease-in-out;
+    }
+
+    @keyframes floatCircle {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(50px, -30px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    section {
+      padding: 80px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .challenge-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .challenge-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(255,255,255,0.2);
+    }
+
+    .tag {
+      background: var(--accent);
+      color: black;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .submit-form {
+      margin-top: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, textarea {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #222;
+      color: white;
+    }
+
+    button[type="submit"] {
+      background: var(--primary);
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    button[type="submit"]:hover {
+      transform: scale(1.03);
+    }
+
+    .success-message {
+      display: none;
+      color: var(--accent);
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hall-da-fama {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .fama-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      position: relative;
+      text-align: center;
+    }
+
+    .emoji-highlight {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      background: #1a1a1a;
+    }
+
+    .social-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .social-btn {
+      background: var(--accent);
+      color: black;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      transition: transform 0.2s ease;
+    }
+
+    .social-btn:hover {
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      .gradient-hero h1 {
+        font-size: 2rem;
+      }
+
+      .gradient-hero p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="gradient-hero">
+    <div class="floating-circle" style="top: 20%; left: 10%;"></div>
+    <h1>Missões Semanais com o ChatBoyAI</h1>
+    <p>Toda semana, um novo desafio criativo com nossos bots!</p>
+    <button class="btn-scroll" onclick="document.getElementById('challenge').scrollIntoView({ behavior: 'smooth' })">Ver Desafio da Semana</button>
+  </div>
+
+  <!-- Current Challenge -->
+  <section id="challenge">
+    <h2>Desafio da Semana</h2>
+    <div class="challenge-card">
+      <h3>Simule uma conversa engraçada entre dois bots</h3>
+      <p>Crie uma interação hilária entre dois bots famosos do ChatBoyAI. Use sua imaginação para criar diálogos criativos e inusitados!</p>
+      <span class="tag">Valendo Destaque na Comunidade</span>
+      <button onclick="toggleSubmission()" class="btn-scroll" style="margin-top: 20px;">Participar Agora</button>
+      <form class="submit-form" id="submissionForm" onsubmit="handleSubmit(event)">
+        <input type="text" placeholder="Seu nome..." required/>
+        <textarea rows="5" placeholder="Escreva sua resposta aqui..." required></textarea>
+        <button type="submit">Enviar Desafio</button>
+        <div class="success-message" id="successMessage">Desafio enviado com sucesso!</div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Hall da Fama -->
+  <section>
+    <h2>Destaques Anteriores</h2>
+    <div class="hall-da-fama">
+      <div class="fama-card">
+        <div class="emoji-highlight">🚀</div>
+        <strong>Júlia Costa</strong>
+        <p>Bot discutindo sobre pizza vs sushi até virar stand-up.</p>
+      </div>
+      <div class="fama-card">
+        <div class="emoji-highlight">👑</div>
+        <strong>Marcos Silva</strong>
+        <p>Dois bots se passando por jornalistas esportivos malucos.</p>
+      </div>
+      <div class="fama-card">
+        <div class="emoji-highlight">⭐</div>
+        <strong>Ana Clara</strong>
+        <p>Conversa de bot com ele mesmo tentando resolver vida amorosa.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Siga-nos nas redes sociais:</p>
+    <div class="social-buttons">
+      <a href="https://discord.gg/9U9WnfF9"  target="_blank" class="social-btn">Discord</a>
+      <a href="https://instagram.com/chatboyai"  target="_blank" class="social-btn">Instagram</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleSubmission() {
+      const form = document.getElementById("submissionForm");
+      form.style.display = form.style.display === "none" ? "flex" : "none";
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const message = document.getElementById("successMessage");
+      message.style.display = "block";
+      message.textContent = "Desafio enviado com sucesso!";
+      e.target.reset();
+    }
+  </script>
+
+</body>
+</html>
