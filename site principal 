@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ChatBoyAI - Bots Inteligentes para Você</title>
+  <title>ChatBoyAI - Bots Inteligentes</title>
   <style>
     :root {
-      --primary: #4A90E2;
-      --secondary: #764BA2;
-      --accent: #00ffe0;
-      --dark: #1a1a2e;
+      --primary: #FFD700; /* Dourado */
+      --secondary: #1a1a2e;
       --light: #ffffff;
-      --gray: #282c3d;
-      --bg-card: #1f2132;
-      --hover-bg: #2a2e45;
-      --glass: rgba(255, 255, 255, 0.05);
+      --dark: #121212;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --hover-bg: rgba(255, 255, 255, 0.1);
       --transition: all 0.3s ease-in-out;
-      --shadow: 0 8px 20px rgba(0, 255, 224, 0.05);
     }
 
     * {
@@ -24,270 +20,173 @@
       padding: 0;
       box-sizing: border-box;
       font-family: 'Segoe UI', sans-serif;
-      scroll-behavior: smooth;
     }
 
     body {
-      background-color: var(--dark);
+      background: url('https://images.unsplash.com/photo-1496715976401-b3cfd5bc6eb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
       color: var(--light);
-      overflow-x: hidden;
+      min-height: 100vh;
     }
 
-    /* Navigation Bar */
-    nav {
+    header {
       position: fixed;
-      top: 0;
       width: 100%;
-      background: rgba(26, 26, 46, 0.95);
+      top: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(10px);
       z-index: 1000;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    nav .logo {
+    .logo {
       font-weight: bold;
       font-size: 1.2rem;
-      color: var(--accent);
+      color: var(--primary);
     }
 
-    nav .menu {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    nav .menu a {
+    nav a {
       color: var(--light);
       text-decoration: none;
+      margin-left: 1.5rem;
       font-weight: 500;
-      transition: color 0.3s;
     }
 
-    nav .menu a:hover {
-      color: var(--accent);
+    main {
+      padding-top: 80px;
+      padding-bottom: 4rem;
+      background: rgba(0, 0, 0, 0.7);
     }
 
-    header {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      position: relative;
-      overflow: hidden;
+    .container {
+      max-width: 1200px;
+      margin: auto;
       padding: 2rem;
     }
 
-    header::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    header h1 {
+    h1 {
+      text-align: center;
       font-size: 2.5rem;
       margin-bottom: 1rem;
-      animation: fadeInUp 1s ease-out forwards;
     }
 
-    header p {
-      font-size: 1rem;
-      max-width: 600px;
-      opacity: 0.9;
-      animation: fadeInUp 1.5s ease-out forwards;
-    }
-
-    section {
-      padding: 4rem 2rem;
-      min-height: 100vh;
-      background: var(--dark);
-    }
-
-    .section-title {
+    p.center {
       text-align: center;
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      position: relative;
-      padding-bottom: 1rem;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      opacity: 0.8;
     }
 
-    .section-title::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 3px;
-      background: var(--accent);
-    }
-
-    .grid {
+    .bots-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 2rem;
-      margin-top: 2rem;
     }
 
-    .card,
-    .config-card,
-    .plan-card,
-    .bot-card,
-    .combo-card,
-    .dashboard-card,
-    .test-area {
+    .bot-card {
       background: var(--bg-card);
       border-radius: 12px;
       padding: 2rem;
       text-align: center;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-      border: 1px solid rgba(255,255,255,0.05);
-      position: relative;
-      overflow: hidden;
-      cursor: default;
+      transition: transform 0.3s ease;
     }
 
-    .card:hover,
-    .config-card:hover,
-    .plan-card:hover,
-    .bot-card:hover,
-    .combo-card:hover,
-    .dashboard-card:hover,
-    .test-area:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 30px rgba(0, 255, 224, 0.15);
-      background: var(--hover-bg);
+    .bot-card:hover {
+      transform: translateY(-10px);
     }
 
-    .icon {
+    .bot-card.free {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .bot-card.premium {
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .bot-icon {
       font-size: 3rem;
+      color: var(--primary);
       margin-bottom: 1rem;
-      color: var(--accent);
     }
 
-    .price {
-      font-size: 1.2rem;
-      color: green;
-      margin-top: 1rem;
+    .bot-name {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
     }
 
-    button {
-      background: var(--primary);
-      color: white;
-      padding: 0.7rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: bold;
-      width: 100%;
-      margin-top: 1rem;
-      position: relative;
-      overflow: hidden;
+    .bot-price {
+      font-size: 1rem;
+      color: var(--primary);
+      margin: 0.5rem 0;
     }
 
-    button::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 300%;
-      height: 300%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.5s ease;
-      border-radius: 50%;
-    }
-
-    button:hover::before {
-      transform: translate(-50%, -50%) scale(1);
-    }
-
-    button:hover {
-      background: #357ABD;
-    }
-
-    .skin-selection {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-    }
-
-    .skin-option {
-      width: 80px;
-      height: 80px;
-      border: 2px solid transparent;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: var(--transition);
-      object-fit: cover;
-    }
-
-    .skin-option:hover {
-      border-color: var(--accent);
-    }
-
-    .skin-option.selected {
-      border-color: var(--accent);
-      transform: scale(1.1);
-      box-shadow: 0 0 10px var(--accent);
-    }
-
-    .fullscreen-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--primary);
-      color: white;
-      padding: 1rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 1001;
-      display: none;
-      font-weight: bold;
-      transition: var(--transition);
-    }
-
-    .chat-box {
-      background: var(--gray);
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 1rem;
-      height: 120px;
-      overflow-y: auto;
-      text-align: left;
+    .bot-description {
       font-size: 0.9rem;
+      margin-bottom: 1rem;
+      opacity: 0.8;
     }
 
-    .timer {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-      color: orange;
+    .bot-actions button {
+      background: var(--primary);
+      color: black;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 0.3rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: var(--transition);
     }
 
-    .modal-overlay {
+    .bot-actions button:hover {
+      background: #fff; 
+    }
+
+    .response-modal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1002;
+      background: rgba(0,0,0,0.7);
       display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+    }
+
+    .modal-content {
+      background: var(--secondary);
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    .chat-example {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #222;
+      border-radius: 8px;
+      font-style: italic;
     }
 
     .notification {
@@ -295,11 +194,10 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: var(--hover-bg);
-      color: white;
+      background: var(--primary);
+      color: black;
       padding: 1rem 2rem;
       border-radius: 8px;
-      z-index: 1002;
       display: none;
       animation: fadeOut 2s forwards;
     }
@@ -309,375 +207,134 @@
       to {opacity: 0; visibility: hidden;}
     }
 
-    .active-section {
-      display: block !important;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      color: red;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
     @media (max-width: 600px) {
-      header h1 {
+      h1 {
         font-size: 2rem;
-      }
-
-      header p {
-        font-size: 0.9rem;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">ChatBoyAI</div>
-  <div class="menu">
-    <a href="#bots" onclick="showSection('bots')">Bots</a>
-    <a href="#configuracoes" onclick="showSection('configuracoes')">Configurações</a>
-    <a href="#planos-section" onclick="showSection('planos-section')">Planos</a>
-  </div>
-</nav>
-
 <header>
-  <h1>Bem-vindo ao ChatBoyAI</h1>
-  <p>Experimente bots inteligentes personalizados para atendimento, segurança, tradução e muito mais.</p>
+  <div class="logo">ChatBoyAI</div>
+  <nav>
+    <a href="#bots">Bots</a>
+  </nav>
 </header>
 
-<section id="bots" class="section">
-  <h2 class="section-title">Nossos Bots</h2>
-  <div class="grid">
-    <div class="bot-card">
-      <div class="icon">🤖</div>
-      <h3>Bot Gratuito Básico</h3>
-      <p>Atendimento simples e rápido.</p>
-      <div class="price">Grátis</div>
-      <button onclick="showSkinSelector('basico')">Personalizar Skin</button>
-    </div>
-    <div class="bot-card">
-      <div class="icon">💼</div>
-      <h3>Bot de Atendimento Premium</h3>
-      <p>Atendimento inteligente com IA avançada.</p>
-      <div class="price">R$49,99/mês</div>
-      <button onclick="showSkinSelector('premium')">Personalizar Skin</button>
-    </div>
-    <div class="bot-card">
-      <div class="icon">🛡️</div>
-      <h3>Bot de Segurança para Discord</h3>
-      <p>Moderador automático e proteção em tempo real.</p>
-      <div class="price">R$89,99/mês</div>
-      <button onclick="showSkinSelector('discord')">Personalizar Skin</button>
-    </div>
-    <div class="bot-card">
-      <div class="icon">🌍</div>
-      <h3>Bot de Tradução Instantânea</h3>
-      <p>Traduz mensagens em tempo real para qualquer idioma.</p>
-      <div class="price">R$149,99/mês</div>
-      <button onclick="showSkinSelector('traducao')">Personalizar Skin</button>
-    </div>
-    <div class="bot-card">
-      <div class="icon">👑</div>
-      <h3>ChatBoy Max</h3>
-      <p>IA completa, automações e personalização total.</p>
-      <div class="price">R$299,99/mês</div>
-      <button onclick="showSkinSelector('max')">Personalizar Skin</button>
-    </div>
-  </div>
-</section>
+<main>
+  <div class="container">
+    <h1>Bem-vindo ao ChatBoyAI</h1>
+    <p class="center">Escolha seu bot inteligente ideal para atendimento, segurança, tradução e automações.</p>
 
-<!-- Configurações -->
-<section id="configuracoes" class="section">
-  <h2 class="section-title">Configurações</h2>
-  <div class="grid">
-    <div class="config-card" onclick="openSkinCustomizer()">
-      <div class="icon">🎨</div>
-      <h3>Personalizar Bot</h3>
-      <p>Altere a aparência do seu bot com skins exclusivas.</p>
-    </div>
-    <div class="config-card" onclick="openIntelligenceDashboard()">
-      <div class="icon">📊</div>
-      <h3>Central de Inteligência</h3>
-      <p>Veja estatísticas e habilidades dos seus bots.</p>
-    </div>
-    <div class="config-card" onclick="toggleTestArea()">
-      <div class="icon">🧪</div>
-      <h3>Testar Bots</h3>
-      <p>Experimente um bot por 30 segundos gratuitamente.</p>
-    </div>
-    <div class="config-card" onclick="toggleCombos()">
-      <div class="icon">🎁</div>
-      <h3>Pacotes de Bots</h3>
-      <p>Compre combos com desconto especial.</p>
-    </div>
-    <div class="config-card" onclick="togglePlanos()">
-      <div class="icon">💳</div>
-      <h3>Ver Planos Premium</h3>
-      <p>Compare e assine planos com benefícios exclusivos.</p>
-    </div>
-  </div>
-</section>
+    <section id="bots">
+      <div class="bots-container">
+        <!-- Bot Gratuito -->
+        <div class="bot-card free">
+          <div class="bot-icon">🤖</div>
+          <h3 class="bot-name">Bot Gratuito Básico</h3>
+          <div class="bot-price">Grátis</div>
+          <p class="bot-description">Atendimento rápido e simples para iniciantes.</p>
+          <div class="bot-actions">
+            <button disabled>Assinar</button>
+            <button onclick="showResponse('respostaBasico')">Ver Resposta</button>
+          </div>
+        </div>
 
-<!-- Central de Inteligência -->
-<section id="intelligence-dashboard" class="section">
-  <h2 class="section-title">Central de Inteligência dos Bots</h2>
-  <div class="grid">
-    <div class="dashboard-card">
-      <h3>Bot de Atendimento</h3>
-      <p><strong>Personalidade:</strong> gentil, rápido e preciso</p>
-      <p>Nível de IA: ★★★★☆</p>
-      <p>Velocidade de Resposta: 0.3s</p>
-      <p>Energia Usada: 45%</p>
-    </div>
-    <div class="dashboard-card">
-      <h3>Bot de Segurança</h3>
-      <p><strong>Personalidade:</strong> rígido, focado em segurança</p>
-      <p>Nível de IA: ★★★★☆</p>
-      <p>Velocidade de Resposta: 0.5s</p>
-      <p>Energia Usada: 60%</p>
-    </div>
-    <div class="dashboard-card">
-      <h3>Bot de Tradução</h3>
-      <p><strong>Personalidade:</strong> multilíngue e detalhista</p>
-      <p>Nível de IA: ★★★★★</p>
-      <p>Velocidade de Resposta: 0.6s</p>
-      <p>Energia Usada: 70%</p>
-    </div>
-  </div>
-</section>
+        <!-- Bot Premium -->
+        <div class="bot-card premium">
+          <div class="bot-icon">💼</div>
+          <h3 class="bot-name">Bot de Atendimento Premium</h3>
+          <div class="bot-price">R$ 49,99/mês</div>
+          <p class="bot-description">Atendimento avançado com IA natural e respostas rápidas.</p>
+          <div class="bot-actions">
+            <button onclick="subscribe('Premium')">Assinar</button>
+            <button onclick="showResponse('respostaPremium')">Ver Resposta</button>
+          </div>
+        </div>
 
-<!-- Pacotes de Bots -->
-<section id="combo-section" class="section">
-  <h2 class="section-title">Pacotes de Bots</h2>
-  <div class="grid">
-    <div class="combo-card">
-      <h3>Pacote Profissional</h3>
-      <p>Inclui: Moderação + Atendimento + Tradutor</p>
-      <p>Preço individual: R$289,97</p>
-      <p><strong>Preço combo:</strong> R$239,99</p>
-      <button onclick="subscribeCombo('Profissional')">Assinar Combo</button>
-    </div>
-    <div class="combo-card">
-      <h3>Pacote Gamer</h3>
-      <p>Inclui: Skin + Suporte Rápido</p>
-      <p>Preço individual: R$129,99</p>
-      <p><strong>Preço combo:</strong> R$99,99</p>
-      <button onclick="subscribeCombo('Gamer')">Assinar Combo</button>
-    </div>
-  </div>
-</section>
+        <!-- Bot Segurança -->
+        <div class="bot-card premium">
+          <div class="bot-icon">🛡️</div>
+          <h3 class="bot-name">Bot de Segurança para Discord</h3>
+          <div class="bot-price">R$ 89,99/mês</div>
+          <p class="bot-description">Moderador automático e proteção contra spam e conteúdo impróprio.</p>
+          <div class="bot-actions">
+            <button onclick="subscribe('Discord')">Assinar</button>
+            <button onclick="showResponse('respostaSeguranca')">Ver Resposta</button>
+          </div>
+        </div>
 
-<!-- Área de Testes Grátis -->
-<section id="test-area" class="section">
-  <h2 class="section-title">Área de Testes Grátis</h2>
-  <div class="test-area">
-    <h3>Tente um bot por 30 segundos</h3>
-    <div class="chat-box" id="chatBox">
-      <p><strong>Bot:</strong> Olá! Como posso ajudar?</p>
-    </div>
-    <input type="text" placeholder="Digite uma mensagem..." onkeydown="handleMessage(event)" style="width:100%; padding:0.5rem; border-radius:6px; border:none;" disabled id="testInput"/>
-    <div class="timer" id="timer">Tempo restante: 30s</div>
-    <button onclick="restartTest()">Reiniciar Teste</button>
-  </div>
-</section>
+        <!-- Bot Tradutor -->
+        <div class="bot-card premium">
+          <div class="bot-icon">🌍</div>
+          <h3 class="bot-name">Bot de Tradução Instantânea</h3>
+          <div class="bot-price">R$ 149,99/mês</div>
+          <p class="bot-description">Traduz conversas em tempo real para mais de 30 idiomas.</p>
+          <div class="bot-actions">
+            <button onclick="subscribe('Traducao')">Assinar</button>
+            <button onclick="showResponse('respostaTraducao')">Ver Resposta</button>
+          </div>
+        </div>
 
-<!-- Planos Section -->
-<section id="planos-section" class="section">
-  <h2 class="section-title">Planos Disponíveis</h2>
-  <div class="grid">
-    <div class="plan-card">
-      <h3>Bot Gratuito Básico</h3>
-      <div class="price">Grátis</div>
-      <ul style="list-style:none; padding:0;">
-        <li>✔ Atendimento básico</li>
-        <li>✖ Suporte técnico</li>
-        <li>✖ Personalização</li>
-      </ul>
-      <button disabled>Já assinado</button>
-    </div>
-    <div class="plan-card">
-      <h3>Bot de Atendimento Premium</h3>
-      <div class="price">R$49,99/mês</div>
-      <ul style="list-style:none; padding:0;">
-        <li>✔ IA Avançada</li>
-        <li>✔ Suporte Técnico</li>
-        <li>✖ Personalização Completa</li>
-      </ul>
-      <button onclick="subscribe('Premium')">Assinar</button>
-    </div>
-    <div class="plan-card">
-      <h3>Bot de Segurança para Discord</h3>
-      <div class="price">R$89,99/mês</div>
-      <ul style="list-style:none; padding:0;">
-        <li>✔ Moderação Automática</li>
-        <li>✔ Proteção contra spam</li>
-        <li>✖ Acesso ao Dashboard</li>
-      </ul>
-      <button onclick="subscribe('Discord')">Assinar</button>
-    </div>
-    <div class="plan-card">
-      <h3>Bot de Tradução Instantânea</h3>
-      <div class="price">R$149,99/mês</div>
-      <ul style="list-style:none; padding:0;">
-        <li>✔ Tradução em Tempo Real</li>
-        <li>✔ Suporte Multilíngue</li>
-        <li>✖ Integração Avançada</li>
-      </ul>
-      <button onclick="subscribe('Tradução')">Assinar</button>
-    </div>
-    <div class="plan-card">
-      <h3>ChatBoy Max</h3>
-      <div class="price">R$299,99/mês</div>
-      <ul style="list-style:none; padding:0;">
-        <li>✔ Todos os Recursos</li>
-        <li>✔ Suporte VIP</li>
-        <li>✔ Personalização Total</li>
-      </ul>
-      <button onclick="subscribe('Max')">Assinar</button>
-    </div>
+        <!-- Bot Max -->
+        <div class="bot-card premium">
+          <div class="bot-icon">👑</div>
+          <h3 class="bot-name">ChatBoy Max</h3>
+          <div class="bot-price">R$ 299,99/mês</div>
+          <p class="bot-description">O melhor da IA: automação total, personalização e recursos exclusivos.</p>
+          <div class="bot-actions">
+            <button onclick="subscribe('Max')">Assinar</button>
+            <button onclick="showResponse('respostaMax')">Ver Resposta</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</section>
+</main>
 
-<!-- Skin Selector -->
-<div id="skin-selector" class="section" style="display: none;">
-  <h2 class="section-title">Selecione uma Skin</h2>
-  <div class="skin-selection">
-    <img src="https://placehold.co/80x80/FF5733/FFFFFF?text=Casual" class="skin-option" onclick="selectSkin(this)" alt="Casual" title="Casual – Simples e elegante">
-    <img src="https://placehold.co/80x80/33C1FF/FFFFFF?text=Tech" class="skin-option" onclick="selectSkin(this)" alt="Tech" title="Tech – Moderno e futurista">
-    <img src="https://placehold.co/80x80/33FF57/FFFFFF?text=Neon" class="skin-option" onclick="selectSkin(this)" alt="Neon" title="Neon – Brilhante e energético">
-    <img src="https://placehold.co/80x80/FFD700/FFFFFF?text=Luxo" class="skin-option" onclick="selectSkin(this)" alt="Luxo" title="Luxo – Elegante e sofisticado">
-    <img src="https://placehold.co/80x80/800080/FFFFFF?text=Gothic" class="skin-option" onclick="selectSkin(this)" alt="Gótico" title="Gótico – Místico e único">
+<!-- Modal de Resposta -->
+<div class="response-modal" id="responseModal">
+  <div class="modal-content">
+    <button class="close-modal" onclick="hideResponse()">×</button>
+    <h3>Exemplo de Resposta</h3>
+    <div class="chat-example" id="responseText"></div>
   </div>
-  <button onclick="closeSkinSelector()">Fechar</button>
 </div>
 
-<button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullScreen()">Sair da Tela Cheia</button>
-
-<!-- Notification Modal -->
-<div class="notification" id="notification"></div>
+<!-- Notificação -->
+<div id="notification" class="notification"></div>
 
 <script>
-  window.ChatBoyAI = {
-    sections: ['bots', 'configuracoes', 'intelligence-dashboard', 'combo-section', 'test-area', 'planos-section', 'skin-selector'],
-    timerInterval: null,
-    timeLeft: 30,
-    activeSkin: '',
-    skinPreview: null,
+  function subscribe(plan) {
+    showNotification(`Você assinou o plano ${plan}!`);
+  }
 
-    showSection(id) {
-      this.sections.forEach(sec => document.getElementById(sec).style.display = sec === id ? 'block' : 'none');
-    },
+  function showResponse(botType) {
+    const responses = {
+      respostaBasico: "Olá! Como posso ajudar?",
+      respostaPremium: "Como posso otimizar sua experiência hoje?",
+      respostaSeguranca: "Mensagem bloqueada por conter linguagem imprópria.",
+      respostaTraducao: "Traduzindo: 'Hello' → 'Olá'",
+      respostaMax: "Sistema pronto. Comandos carregados. Pronto para uso completo."
+    };
 
-    toggleSection(id) {
-      const el = document.getElementById(id);
-      this.sections.filter(s => s !== id).forEach(s => document.getElementById(s).style.display = 'none');
-      el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    },
+    document.getElementById("responseText").innerText = responses[botType] || "Resposta não disponível.";
+    document.getElementById("responseModal").style.display = "flex";
+  }
 
-    openSkinCustomizer() {
-      this.toggleSection('skin-selector');
-    },
-    openIntelligenceDashboard() {
-      this.toggleSection('intelligence-dashboard');
-    },
-    toggleCombos() {
-      this.toggleSection('combo-section');
-    },
-    toggleTestArea() {
-      this.toggleSection('test-area');
-      this.startTestTimer();
-    },
-    togglePlanos() {
-      this.toggleSection('planos-section');
-    },
-    closeSkinSelector() {
-      this.toggleSection('skin-selector');
-    },
-    selectSkin(el) {
-      document.querySelectorAll(".skin-option").forEach(img => img.classList.remove("selected"));
-      el.classList.add("selected");
-      this.showNotification("Skin selecionada aplicada!");
-    },
-    subscribe(plan) {
-      this.showNotification(`Você assinou o plano ${plan}!`);
-    },
-    subscribeCombo(combo) {
-      this.showNotification(`Você comprou o pacote "${combo}"!`);
-    },
-    startTestTimer() {
-      if (document.getElementById('test-area').style.display !== 'block') return;
-      clearInterval(this.timerInterval);
-      this.timeLeft = 30;
-      document.getElementById("timer").innerText = `Tempo restante: ${this.timeLeft}s`;
-      document.getElementById("testInput").disabled = false;
-      document.getElementById("testInput").focus();
+  function hideResponse() {
+    document.getElementById("responseModal").style.display = "none";
+  }
 
-      this.timerInterval = setInterval(() => {
-        this.timeLeft--;
-        if (this.timeLeft <= 0) {
-          clearInterval(this.timerInterval);
-          document.getElementById("testInput").disabled = true;
-          document.getElementById("chatBox").innerHTML += `<p><strong>Sistema:</strong> Tempo esgotado. Assine para continuar usando.</p>`;
-          document.getElementById("timer").innerText = "Teste concluído.";
-          document.getElementById("testInput").value = "";
-        } else {
-          document.getElementById("timer").innerText = `Tempo restante: ${this.timeLeft}s`;
-        }
-      }, 1000);
-    },
-    restartTest() {
-      this.startTestTimer();
-      document.getElementById("chatBox").innerHTML = `<p><strong>Bot:</strong> Olá! Como posso ajudar?</p>`;
-    },
-    handleMessage(e) {
-      if (e.key === 'Enter') {
-        const input = document.getElementById("testInput");
-        const chatBox = document.getElementById("chatBox");
-        const msg = input.value.trim();
-        if (msg) {
-          chatBox.innerHTML += `<p><strong>Você:</strong> ${msg}</p>`;
-          setTimeout(() => {
-            chatBox.innerHTML += `<p><strong>Bot:</strong> Estou aqui para ajudar você!</p>`;
-          }, 500);
-          input.value = "";
-          chatBox.scrollTop = chatBox.scrollHeight;
-        }
-      }
-    },
-    toggleFullScreen() {
-      const btn = document.getElementById("fullscreenBtn");
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        btn.innerText = "Sair da Tela Cheia";
-        btn.style.display = "block";
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        btn.style.display = "none";
-      }
-    },
-    showNotification(message) {
-      const notif = document.getElementById("notification");
-      notif.innerText = message;
-      notif.style.display = 'block';
-      setTimeout(() => {
-        notif.style.display = 'none';
-      }, 2000);
-    }
-  };
+  function showNotification(message) {
+    const notif = document.getElementById("notification");
+    notif.innerText = message;
+    notif.style.display = "block";
+    setTimeout(() => notif.style.display = "none", 2000);
+  }
+</script>
 
-  // Attach global functions for HTML
-  window.showSection = id => ChatBoyAI.showSection(id);
-  window.openSkinCustomizer = () => ChatBoyAI.openSkinCustomizer();
-  window.openIntelligenceDashboard = () => ChatBoyAI.openIntelligenceDashboard();
-  window.toggleCombos = () => ChatBoyAI.toggleCombos();
-  window.toggleTestArea = () => ChatBoyAI.toggleT
+</body>
+</html>
