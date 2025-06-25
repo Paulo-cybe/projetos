@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatBoy AI - Bots Poderosos e Personalizáveis</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #0f0f1c;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      outline: none;
+      border: none;
+      transition: all 0.3s ease;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 15, 28, 0.9);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #00ffd5;
+      letter-spacing: 1px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    nav ul li a {
+      color: #ccc;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      color: #00ffd5;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #1a1a2e, #0f0f1c);
+      animation: fadeInDown 1.5s ease-out forwards;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #00ffd5, #7d3cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin-bottom: 30px;
+      opacity: 0.8;
+    }
+
+    .btn-main {
+      background: #00ffd5;
+      color: #0f0f1c;
+      padding: 15px 30px;
+      font-size: 1rem;
+      border-radius: 30px;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Showcase */
+    .showcase {
+      padding: 100px 20px;
+      background: #16162a;
+    }
+
+    .showcase h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 60px;
+      color: #00ffd5;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1f1f30;
+      padding: 30px;
+      border-radius: 15px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: slideUp 1s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgba(0, 255, 213, 0.2);
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Pricing */
+    .pricing {
+      padding: 100px 20px;
+      background: #0f0f1c;
+    }
+
+    .pricing h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 60px;
+      color: #00ffd5;
+    }
+
+    .plans {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .plan {
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 15px;
+      width: 300px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .plan:hover {
+      transform: scale(1.05);
+    }
+
+    .plan h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .price {
+      font-size: 2rem;
+      color: #00ffd5;
+      margin: 10px 0;
+    }
+
+    .plan ul {
+      list-style: none;
+      margin: 20px 0;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .plan ul li {
+      margin-bottom: 10px;
+    }
+
+    .plan button {
+      background: #00ffd5;
+      color: #0f0f1c;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-weight: bold;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      padding: 100px 20px;
+      background: #16162a;
+    }
+
+    .testimonials h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 60px;
+      color: #00ffd5;
+    }
+
+    .reviews {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .review {
+      background: #1f1f30;
+      padding: 25px;
+      border-radius: 15px;
+      width: 300px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .review p {
+      font-style: italic;
+      opacity: 0.9;
+    }
+
+    .review strong {
+      margin-top: 15px;
+      display: block;
+      color: #00ffd5;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Contact */
+    .contact {
+      padding: 100px 20px;
+      background: #0f0f1c;
+    }
+
+    .contact h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #00ffd5;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      background: #111;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .submit-btn {
+      background: #00ffd5;
+      color: #0f0f1c;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    /* Footer Buttons */
+    .footer-buttons {
+      padding: 60px 20px;
+      text-align: center;
+      background: #16162a;
+    }
+
+    .footer-buttons a {
+      display: inline-block;
+      margin: 10px;
+      background: #7d3cff;
+      color: #fff;
+      padding: 15px 30px;
+      border-radius: 30px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .footer-buttons a:hover {
+      background: #00ffd5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+
+      .plan {
+        width: 90%;
+      }
+
+      .review {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">ChatBoy AI</div>
+    <nav>
+      <ul>
+        <li><a href="#showcase">Produtos</a></li>
+        <li><a href="#pricing">Preços</a></li>
+        <li><a href="#testimonials">Depoimentos</a></li>
+        <li><a href="#contact">Contato</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <h1>Crie bots poderosos e personalizáveis para automação, moderação, redes sociais, trading e muito mais!</h1>
+    <p>Torne-se um mestre da automação com nossos bots profissionais e fáceis de configurar.</p>
+    <button class="btn-main">Começar Agora</button>
+  </section>
+
+  <!-- Showcase -->
+  <section class="showcase" id="showcase">
+    <h2>Nossos Produtos</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Bot de Moderação</h3>
+        <p>Gerencie seu servidor Discord automaticamente com regras personalizadas e inteligência artificial integrada.</p>
+      </div>
+      <div class="card">
+        <h3>Bot de Social Media</h3>
+        <p>Automatize publicações, interações e análises em Instagram, Twitter e outras plataformas sociais.</p>
+      </div>
+      <div class="card">
+        <h3>Bot de Trading</h3>
+        <p>Execute operações automáticas no mercado financeiro com algoritmos avançados e baixa latência.</p>
+      </div>
+      <div class="card">
+        <h3>Bot de Autoresponder</h3>
+        <p>Responda automaticamente mensagens em WhatsApp, Telegram ou e-mails com respostas inteligentes e contextuais.</p>
+      </div>
+      <div class="card">
+        <h3>Bot de Scraping</h3>
+        <p>Extraia dados de qualquer site ou API com facilidade e segurança, tudo automatizado.</p>
+      </div>
+      <div class="card">
+        <h3>Bot de Atendimento</h3>
+        <p>Ofereça suporte instantâneo ao cliente através de chatbots integrados e treinados para sua marca.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <h2>Planos e Preços</h2>
+    <div class="plans">
+      <div class="plan">
+        <h3>Básico</h3>
+        <div class="price">R$ 49/mês</div>
+        <ul>
+          <li>Até 1 bot ativo</li>
+          <li>Suporte básico</li>
+          <li>Atualizações mensais</li>
+        </ul>
+        <button>Assinar</button>
+      </div>
+      <div class="plan">
+        <h3>Premium</h3>
+        <div class="price">R$ 99/mês</div>
+        <ul>
+          <li>Até 5 bots ativos</li>
+          <li>Suporte prioritário</li>
+          <li>Atualizações semanais</li>
+        </ul>
+        <button>Assinar</button>
+      </div>
+      <div class="plan">
+        <h3>Empresarial</h3>
+        <div class="price">R$ 249/mês</div>
+        <ul>
+          <li>Bots ilimitados</li>
+          <li>Suporte 24/7</li>
+          <li>Personalização completa</li>
+        </ul>
+        <button>Assinar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials" id="testimonials">
+    <h2>O Que Nossos Clientes Dizem</h2>
+    <div class="reviews">
+      <div class="review">
+        <p>"O bot de moderação mudou totalmente minha comunidade no Discord. Super fácil de usar!"</p>
+        <strong>— João Silva</strong>
+      </div>
+      <div class="review">
+        <p>"Com o bot de social media, consegui aumentar minhas vendas em 40% nas redes sociais."</p>
+        <strong>— Ana Paula</strong>
+      </div>
+      <div class="review">
+        <p>"O melhor serviço que já usei. O suporte é rápido e os bots são incrivelmente poderosos."</p>
+        <strong>— Carlos M.</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact" id="contact">
+    <h2>Fale Conosco</h2>
+    <div class="form-container">
+      <form id="contactForm">
+        <div class="form-group">
+          <input type="text" placeholder="Seu nome" required />
+        </div>
+        <div class="form-group">
+          <input type="email" placeholder="Seu e-mail" required />
+        </div>
+        <div class="form-group">
+          <textarea placeholder="Sua mensagem" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Enviar Mensagem</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer Buttons -->
+  <section class="footer-buttons">
+    <a href="https://discord.gg/9U9WnfF9"  target="_blank">Entrar no Discord</a>
+    <a href="https://instagram.com/chatboyai"  target="_blank">Seguir no Instagram</a>
+  </section>
+
+  <script>
+    // Simulação de envio do formulário
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert("Mensagem enviada com sucesso!");
+      this.reset();
+    });
+  </script>
+
+</body>
+</html>
