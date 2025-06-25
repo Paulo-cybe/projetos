@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatBoyAI - Tutorial Interativo</title>
+
+  <!-- Intro.js CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/intro.js@3.4.0/introjs.css"  rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #6d28d9;
+      --secondary: #8b5cf6;
+      --bg: #0f172a;
+      --text: #f8fafc;
+      --accent: #f97316;
+      --card-bg: #1e293b;
+      --tooltip-bg: #1e293b;
+      --tooltip-text: #f8fafc;
+      --border-radius: 0.75rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 4rem 1rem 2rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+    }
+
+    section {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .bot-card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .bot-card {
+      background-color: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 0.5s ease-in-out;
+    }
+
+    .bot-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .bot-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .bot-name {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      background-color: #1e293b;
+    }
+
+    .footer a {
+      color: var(--secondary);
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .footer a:hover {
+      color: var(--accent);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Intro.js custom tooltip style */
+    .introjs-tooltip {
+      max-width: 300px !important;
+      background-color: var(--tooltip-bg) !important;
+      color: var(--tooltip-text) !important;
+      border-radius: var(--border-radius) !important;
+      padding: 1rem !important;
+      font-size: 0.95rem !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .introjs-button {
+      background-color: var(--secondary) !important;
+      color: white !important;
+      border: none !important;
+      padding: 0.5rem 1rem !important;
+      border-radius: var(--border-radius) !important;
+      font-size: 0.85rem !important;
+      cursor: pointer !important;
+      transition: background-color 0.3s ease !important;
+      margin-left: 0.5rem !important;
+    }
+
+    .introjs-button:hover {
+      background-color: var(--accent) !important;
+    }
+
+    .introjs-prevbutton,
+    .introjs-skipbutton {
+      background-color: #64748b !important;
+    }
+
+    .introjs-prevbutton:hover,
+    .introjs-skipbutton:hover {
+      background-color: #94a3b8 !important;
+    }
+
+    .introjs-helperNumberButton {
+      display: none !important;
+    }
+
+    .introjs-bullets {
+      display: none !important;
+    }
+
+    .introjs-tooltipbuttons {
+      text-align: right !important;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+
+      .introjs-tooltip {
+        max-width: 90vw !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header id="intro">
+    <h1>Bem-vindo ao universo ChatBoyAI</h1>
+    <p>Descubra como nossos bots podem transformar sua experiência</p>
+  </header>
+
+  <!-- Tipos de Bots -->
+  <section id="bots-section" data-intro="Vamos conhecer os tipos de bots disponíveis!" data-step="1">
+    <h2 class="section-title">Tipos de Bots</h2>
+    <div class="bot-card-container">
+      <div class="bot-card" data-intro="Bot de Moderação: mantenha seu chat seguro e organizado." data-step="2">
+        <div class="bot-icon">👮‍♂️</div>
+        <div class="bot-name">Bot de Moderação</div>
+        <p>Monitore conversas em tempo real e remova conteúdo impróprio automaticamente.</p>
+      </div>
+      <div class="bot-card" data-intro="Bot de Atendimento: responda usuários 24/7 sem cansaço." data-step="3">
+        <div class="bot-icon">🤖</div>
+        <div class="bot-name">Bot de Atendimento</div>
+        <p>Ajude clientes com dúvidas frequentes, agilizando o suporte.</p>
+      </div>
+      <div class="bot-card" data-intro="Bot de Tradução: quebre barreiras linguísticas instantaneamente." data-step="4">
+        <div class="bot-icon">🌍</div>
+        <div class="bot-name">Bot de Tradução</div>
+        <p>Traduza mensagens entre idiomas diferentes em tempo real.</p>
+      </div>
+      <div class="bot-card" data-intro="Bot de Trading: ajude na tomada de decisões financeiras." data-step="5">
+        <div class="bot-icon">📈</div>
+        <div class="bot-name">Bot de Trading</div>
+        <p>Analise dados do mercado e forneça insights para traders iniciantes.</p>
+      </div>
+      <div class="bot-card" data-intro="Bot de Engajamento Social: aumente a interação nas redes sociais." data-step="6">
+        <div class="bot-icon">💬</div>
+        <div class="bot-name">Bot de Engajamento Social</div>
+        <p>Interaja com seguidores, responda comentários e aumente a visibilidade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rodapé -->
+  <footer class="footer" id="footer-section" data-intro="Conecte-se conosco nas redes sociais!" data-step="7">
+    <p>Redes Sociais:</p>
+    <p>
+      <a href="https://discord.gg/9U9WnfF9"  target="_blank">Discord</a> | 
+      <a href="https://instagram.com/chatboyai"  target="_blank">@chatboyai</a>
+    </p>
+  </footer>
+
+  <!-- Intro.js Script -->
+  <script src="https://cdn.jsdelivr.net/npm/intro.js@3.4.0/intro.min.js"></script> 
+
+  <script>
+    // Iniciar tour intro.js
+    window.onload = function () {
+      introJs().start();
+    };
+  </script>
+</body>
+</html>
