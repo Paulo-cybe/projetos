@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Área do Cliente - ChatBoyAI</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      font-family: 'Poppins', sans-serif;
+      height: 100%;
+      background-color: #f4f6f9;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    a, button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #00ffd5;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #7d3cff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .logout-btn {
+      background: #ff4d4d;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: #e60000;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+      margin-top: 40px;
+      text-align: center;
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    .welcome-section h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #00ffd5;
+    }
+
+    .welcome-section p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+
+    /* Bots Grid */
+    .bots-grid {
+      margin-top: 50px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .bot-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .bot-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgba(0, 255, 213, 0.15);
+    }
+
+    .bot-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #00ffd5;
+    }
+
+    .bot-card p {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      margin-bottom: 15px;
+    }
+
+    .bot-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .bot-button {
+      margin-top: 15px;
+      display: inline-block;
+      background: #7d3cff;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: background 0.3s ease;
+    }
+
+    .bot-button:hover {
+      background: #00ffd5;
+      color: #0f0f1c;
+    }
+
+    /* License Key Section */
+    .license-section {
+      margin-top: 60px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      animation: fadeInDown 1s ease-in-out;
+    }
+
+    .license-section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #00ffd5;
+    }
+
+    .license-key {
+      font-family: monospace;
+      font-size: 1rem;
+      padding: 12px 15px;
+      background: #f1f1f1;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .copy-btn {
+      background: #00ffd5;
+      color: #0f0f1c;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-left: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background: #00ccaa;
+    }
+
+    /* Activation Status */
+    .activation-status {
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(to right, #00ffd5, #7d3cff);
+    }
+
+    /* Support Chat Button */
+    .chat-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #00ffd5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0, 255, 213, 0.4);
+      animation: pulse 2s infinite;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    .chat-icon svg {
+      width: 30px;
+      height: 30px;
+      fill: #0f0f1c;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Floating Chat */
+    .chat-window {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      display: none;
+      flex-direction: column;
+      animation: slideUp 0.4s ease-in-out;
+      z-index: 999;
+    }
+
+    .chat-header {
+      background: #00ffd5;
+      color: #0f0f1c;
+      padding: 12px 15px;
+      font-weight: bold;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .chat-body {
+      padding: 15px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .license-key {
+        font-size: 0.9rem;
+      }
+
+      .chat-window {
+        width: 90%;
+        left: 5%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">ChatBoyAI</div>
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <button class="logout-btn" onclick="logout()">Sair</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+      <h1>Bem-vindo(a), João!</h1>
+      <p>Aqui está o controle completo dos seus bots adquiridos.</p>
+    </section>
+
+    <!-- Bots Grid -->
+    <section class="bots-grid">
+      <div class="bot-card">
+        <h3>Bot de Moderação</h3>
+        <p>Gerencia automaticamente seu servidor Discord com regras inteligentes e segurança avançada.</p>
+        <div class="bot-details">
+          <span>Versão: 2.1.0</span>
+        </div>
+        <a href="#" class="bot-button">Baixar Instruções</a>
+      </div>
+      <div class="bot-card">
+        <h3>Bot de Social Media</h3>
+        <p>Automatiza interações em Instagram, Twitter e LinkedIn para aumentar engajamento.</p>
+        <div class="bot-details">
+          <span>Versão: 1.3.2</span>
+        </div>
+        <a href="#" class="bot-button">Baixar Instruções</a>
+      </div>
+      <div class="bot-card">
+        <h3>Bot de Trading</h3>
+        <p>Realiza operações automatizadas no mercado financeiro com baixa latência e alta precisão.</p>
+        <div class="bot-details">
+          <span>Versão: 3.0.1</span>
+        </div>
+        <a href="#" class="bot-button">Baixar Instruções</a>
+      </div>
+    </section>
+
+    <!-- License Section -->
+    <section class="license-section">
+      <h2>Sua Chave de Licença</h2>
+      <div class="license-key">
+        <span>XK9F-GH23-8ZB4-KQW1</span>
+        <button class="copy-btn" onclick="copyLicenseKey()">Copiar</button>
+      </div>
+      <div class="activation-status">
+        Status da licença: <span class="status-badge">Ativado</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Support Chat -->
+  <div class="chat-icon" onclick="toggleChat()">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+  </div>
+
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-header">Suporte ChatBoyAI</div>
+    <div class="chat-body">
+      Olá! Como podemos ajudar você hoje? 😊
+    </div>
+  </div>
+
+  <script>
+    // Toggle chat window
+    function toggleChat() {
+      const chat = document.getElementById('chatWindow');
+      chat.style.display = chat.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Copy license key
+    function copyLicenseKey() {
+      const text = "XK9F-GH23-8ZB4-KQW1";
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Chave copiada para a área de transferência!");
+      });
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm("Você tem certeza que deseja sair?")) {
+        location.reload();
+      }
+    }
+  </script>
+
+</body>
+</html>
