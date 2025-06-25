@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Central de Comandos do ChatBoyAI</title>
+  <style>
+    :root {
+      --primary: #00ffcc;
+      --secondary: #3300ff;
+      --bg: #010101;
+      --text: #f5f5f5;
+      --terminal-bg: #0d0d0d;
+      --glow-color: #00ffff;
+      --accent-yellow: #fff200;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: var(--accent-yellow);
+      text-decoration: none;
+    }
+
+    h1, h2 {
+      font-weight: bold;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      text-align: center;
+      padding: 100px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .btn-terminal {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 24px;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-terminal:hover {
+      background: white;
+      color: black;
+    }
+
+    .glitch-circle {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: floatGlow 6s infinite ease-in-out;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes floatGlow {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .terminal-container {
+      display: none;
+      flex-direction: column;
+      background: var(--terminal-bg);
+      border: 2px solid var(--primary);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 40px auto;
+      max-width: 800px;
+      box-shadow: 0 0 20px var(--primary);
+    }
+
+    .output {
+      min-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      padding-right: 10px;
+    }
+
+    .line {
+      margin-bottom: 10px;
+    }
+
+    .input-line {
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1em;
+      outline: none;
+      flex-grow: 1;
+      font-family: inherit;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      background: white;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+
+    .commands {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .cmd-button {
+      background: var(--terminal-bg);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .cmd-button:hover {
+      background: var(--primary);
+      color: black;
+      transform: scale(1.05);
+    }
+
+    .bot-response {
+      position: relative;
+      padding-left: 10px;
+      border-left: 3px solid var(--accent-yellow);
+      margin-top: 10px;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .bot-name {
+      font-weight: bold;
+      color: var(--accent-yellow);
+    }
+
+    .bot-personality-tag {
+      font-size: 0.8rem;
+      color: gray;
+      margin-left: 10px;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      background: #0a0a0a;
+    }
+
+    .social-links {
+      margin-top: 10px;
+    }
+
+    .social-link {
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .terminal-container {
+        margin: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="glitch-circle"></div>
+    <h1>Central de Comandos do ChatBoyAI</h1>
+    <p>Digite comandos e veja como os bots responderiam</p>
+    <button onclick="startTerminal()" class="btn-terminal">Iniciar Terminal</button>
+  </section>
+
+  <!-- Terminal -->
+  <div id="terminal" class="terminal-container">
+    <div class="commands">
+      <button class="cmd-button" onclick="simulateCommand('/ajuda')">/ajuda</button>
+      <button class="cmd-button" onclick="simulateCommand('/bemvindo')">/bemvindo</button>
+      <button class="cmd-button" onclick="simulateCommand('/traduzir olá')">/traduzir olá</button>
+      <button class="cmd-button" onclick="simulateCommand('/motivação')">/motivação</button>
+      <button class="cmd-button" onclick="simulateCommand('/banir @tóxico')">/banir @tóxico</button>
+    </div>
+
+    <div id="output" class="output"></div>
+
+    <div class="input-line">
+      <span>> </span>
+      <input type="text" id="commandInput" autocomplete="off" placeholder="Digite um comando e pressione Enter..." onkeydown="handleKey(event)" />
+      <span class="cursor"></span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Siga-nos nas redes sociais:</p>
+    <div class="social-links">
+      <a href="https://discord.gg/9U9WnfF9"  target="_blank" class="social-link">Discord</a> | 
+      <a href="https://instagram.com/chatboyai"  target="_blank" class="social-link">Instagram</a>
+    </div>
+  </footer>
+
+  <script>
+    const personalities = ['educado', 'sarcástico', 'engraçado', 'confuso'];
+
+    function startTerminal() {
+      document.querySelector('.hero').style.display = 'none';
+      document.getElementById('terminal').style.display = 'flex';
+      document.getElementById('commandInput').focus();
+    }
+
+    function handleKey(e) {
+      if (e.key === "Enter") {
+        const input = document.getElementById("commandInput");
+        const cmd = input.value.trim().toLowerCase();
+        if (cmd) {
+          addLine(`> ${cmd}`, 'user');
+          simulateResponse(cmd);
+          input.value = '';
+        }
+      }
+    }
+
+    function simulateCommand(cmd) {
+      const input = document.getElementById("commandInput");
+      input.value = cmd;
+      addLine(`> ${cmd}`, 'user');
+      simulateResponse(cmd);
+      input.focus();
+    }
+
+    function addLine(text, type) {
+      const output = document.getElementById("output");
+      const line = document.createElement("div");
+      line.classList.add("line", type);
+      line.textContent = text;
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function simulateResponse(command) {
+      let response = "";
+      let personality = personalities[Math.floor(Math.random() * personalities.length)];
+
+      switch (true) {
+        case command.includes("/ajuda"):
+          response = "Aqui estão meus comandos disponíveis: /ajuda, /bemvindo, /traduzir [texto], /motivação, /banir [@usuário]";
+          break;
+        case command.includes("/bemvindo"):
+          response = "Seja muito bem-vindo(a)! Espero que esteja animado para explorar!";
+          break;
+        case command.includes("/traduzir"):
+          const textToTranslate = command.replace("/traduzir ", "");
+          response = `O texto "${textToTranslate}" traduzido é: "Hello"`;
+          break;
+        case command.includes("/motivação"):
+          response = "Vamos lá! Você consegue tudo o que quiser se continuar tentando!";
+          break;
+        case command.includes("/banir"):
+          const user = command.split(" ")[1];
+          response = `Usuário ${user} banido com sucesso... ou será que não? 😏`;
+          break;
+        default:
+          response = "Comando desconhecido. Tente /ajuda para ver os comandos disponíveis.";
+      }
+
+      if (personality === "sarcástico") {
+        response += " ...sério?";
+      } else if (personality === "engraçado") {
+        response += " 🤣";
+      } else if (personality === "confuso") {
+        response = "Não tenho certeza sobre isso... mas acho que sim?";
+      }
+
+      setTimeout(() => {
+        showTypingEffect(response, personality);
+      }, 500);
+    }
+
+    function showTypingEffect(text, personality) {
+      const container = document.getElementById("output");
+      const responseDiv = document.createElement("div");
+      responseDiv.classList.add("bot-response");
+
+      const nameSpan = document.createElement("span");
+      nameSpan.classList.add("bot-name");
+      nameSpan.innerText = "Bot";
+
+      const tagSpan = document.createElement("span");
+      tagSpan.classList.add("bot-personality-tag");
+      tagSpan.innerText = `[${personality}]`;
+
+      const textSpan = document.createElement("span");
+      textSpan.style.marginLeft = "10px";
+
+      responseDiv.appendChild(nameSpan);
+      responseDiv.appendChild(tagSpan);
+      responseDiv.appendChild(textSpan);
+      container.appendChild(responseDiv);
+
+      let index = 0;
+      function type() {
+        if (index < text.length) {
+          textSpan.textContent += text.charAt(index);
+          index++;
+          setTimeout(type, 30);
+        }
+      }
+      type();
+
+      container.scrollTop = container.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>
