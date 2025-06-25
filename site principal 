@@ -591,6 +591,12 @@
 </div>
 
 <script>
+  
+  // Garante que premiumPlans começa fechado ao abrir a página
+document.addEventListener('DOMContentLoaded', function() {
+  const premium = document.getElementById("premiumPlans");
+  if (premium) premium.style.display = "none";
+});
   // Show/hide sections
   function showSection(id) {
     document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
@@ -604,11 +610,10 @@
     if (id === 'settings') buttons[2].classList.add("active");
   }
 
-  // Toggle premium section
-  function togglePremium() {
-    const section = document.getElementById("premiumPlans");
-    section.style.display = section.style.display === "none" ? "flex" : "none";
-  }
+function togglePremium() {
+  const section = document.getElementById("premiumPlans");
+  section.style.display = (section.style.display === "none" || !section.style.display) ? "flex" : "none";
+}
 
   // Chat simulation
   function sendMessage() {
@@ -646,13 +651,13 @@
     document.querySelector("footer").style.display = "none";
   }
 
-  function exitFullscreen() {
-    document.getElementById("fullscreenChat").style.display = "none";
-    document.querySelector("main").style.display = "block";
-    document.querySelector("nav").style.display = "flex";
-    document.querySelector("header").style.display = "flex";
-    document.querySelector("footer").style.display = "block";
-  }
+function exitFullscreen() {
+  document.getElementById("fullscreenChat").style.display = "none";
+  document.querySelector("main").style.display = "block";
+  document.querySelector("nav").style.display = "flex";
+  document.querySelector("header").style.display = "flex";
+  document.querySelector("footer").style.display = "block";
+}
 
   function sendFullscreenMessage() {
     const input = document.getElementById("fullscreenChatInput");
@@ -684,6 +689,13 @@
       "linear-gradient(135deg, #1e1f26, #2d2f40)" :
       "linear-gradient(135deg, #f5f7fa, #c3cfe2)";
   }
+  // Permite sair do fullscreen pressionando ESC
+document.addEventListener('keydown', function(e) {
+  const fullscreen = document.getElementById("fullscreenChat");
+  if (fullscreen.style.display === "flex" && e.key === "Escape") {
+    exitFullscreen();
+  }
+});
 </script>
 </body>
 </html>
