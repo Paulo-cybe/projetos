@@ -5,336 +5,707 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ChatBoyAI - Bots Inteligentes</title>
   <style>
-    :root {
-      --primary: #FFD700; /* Dourado */
-      --secondary: #1a1a2e;
-      --light: #ffffff;
-      --dark: #121212;
-      --bg-card: rgba(255, 255, 255, 0.05);
-      --hover-bg: rgba(255, 255, 255, 0.1);
-      --transition: all 0.3s ease-in-out;
-    }
-
+    /* Reset */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
     }
 
     body {
-      background: url('https://images.unsplash.com/photo-1496715976401-b3cfd5bc6eb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: var(--light);
-      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d0d0d;
+      color: #f5f5f5;
+      overflow-x: hidden;
     }
 
+    /* Header */
     header {
-      position: fixed;
-      width: 100%;
-      top: 0;
-      left: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
+      position: relative;
+      text-align: center;
+      padding: 20px 0;
+      background-color: #1a1a1a;
     }
 
     .logo {
+      font-size: 2rem;
       font-weight: bold;
-      font-size: 1.2rem;
-      color: var(--primary);
+      color: #ffc107;
     }
 
-    nav a {
-      color: var(--light);
-      text-decoration: none;
-      margin-left: 1.5rem;
-      font-weight: 500;
+    /* Botão Configurações */
+    .btn-config {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .btn-config span {
+      width: 100%;
+      height: 4px;
+      background: #ffc107;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .btn-config:hover span:nth-child(1) { transform: translateX(-5px); }
+    .btn-config:hover span:nth-child(3) { transform: translateX(5px); }
+
+    /* Carrinho */
+    .cart-icon {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 40px;
+      height: 40px;
+      background: #ffc107;
+      color: black;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 9997;
+      box-shadow: 0 4px 10px rgba(255,193,7,0.4);
     }
 
-    main {
-      padding-top: 80px;
-      padding-bottom: 4rem;
-      background: rgba(0, 0, 0, 0.7);
+    .cart-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      padding: 3px 6px;
+      font-size: 0.75rem;
+      min-width: 18px;
+      text-align: center;
     }
 
+    .cart-modal {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      z-index: 9998;
+      overflow-y: auto;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .cart-item button {
+      background: none;
+      color: red;
+      border: none;
+      cursor: pointer;
+    }
+
+    .cart-total {
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .cart-checkout {
+      margin-top: 10px;
+      width: 100%;
+      background: #ffc107;
+      color: black;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Container principal */
     .container {
       max-width: 1200px;
-      margin: auto;
-      padding: 2rem;
+      margin: 40px auto;
+      padding: 0 20px;
     }
 
-    h1 {
+    .center {
       text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 40px;
+      color: #ccc;
     }
 
-    p.center {
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto 3rem;
-      opacity: 0.8;
-    }
-
+    /* Cards dos Bots */
     .bots-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
 
     .bot-card {
-      background: var(--bg-card);
-      border-radius: 12px;
-      padding: 2rem;
-      text-align: center;
-      transition: transform 0.3s ease;
+      background: #1c1c1c;
+      border-radius: 10px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-left: 4px solid #ffc107;
     }
 
     .bot-card:hover {
-      transform: translateY(-10px);
-    }
-
-    .bot-card.free {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .bot-card.premium {
-      border: 2px solid var(--primary);
-      box-shadow: 0 0 10px var(--primary);
+      transform: translateY(-8px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
     }
 
     .bot-icon {
-      font-size: 3rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .bot-name {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #ffc107;
     }
 
     .bot-price {
-      font-size: 1rem;
-      color: var(--primary);
-      margin: 0.5rem 0;
-    }
-
-    .bot-description {
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-      opacity: 0.8;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #ffc107;
     }
 
     .bot-actions button {
-      background: var(--primary);
-      color: black;
+      margin-right: 10px;
+      padding: 8px 16px;
       border: none;
-      padding: 0.5rem 1rem;
-      margin: 0.3rem;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
-      transition: var(--transition);
+      transition: background 0.3s ease;
+    }
+
+    .bot-actions button:first-child {
+      background-color: #333;
+      color: white;
+    }
+
+    .bot-actions button:last-child {
+      background-color: #ffc107;
+      color: black;
     }
 
     .bot-actions button:hover {
-      background: #fff; 
+      opacity: 0.9;
     }
 
+    /* Modal de resposta */
     .response-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
       display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.8);
       justify-content: center;
       align-items: center;
-      z-index: 1001;
+      z-index: 9998;
     }
 
     .modal-content {
-      background: var(--secondary);
-      padding: 2rem;
-      border-radius: 12px;
-      max-width: 400px;
-      width: 90%;
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 10px;
+      width: 400px;
       text-align: center;
-      position: relative;
+      border: 2px solid #ffc107;
     }
 
     .close-modal {
+      margin-top: 20px;
+      padding: 8px 16px;
+      background: #ffc107;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Sidebar */
+    .config-sidebar {
+      position: fixed;
+      left: -320px;
+      top: 0;
+      width: 300px;
+      height: 100%;
+      background-color: #1a1a1a;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.4);
+      padding: 20px;
+      z-index: 9999;
+      transition: left 0.4s ease;
+    }
+
+    .config-sidebar.active {
+      left: 0;
+    }
+
+    .menu-lateral {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .menu-lateral button {
+      background: #2a2a2a;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .menu-lateral button:hover {
+      background: #3a3a3a;
+    }
+
+    .aba-conteudo {
+      display: none;
+    }
+
+    .aba-conteudo.active {
+      display: block;
+    }
+
+    .close-btn {
       position: absolute;
       top: 10px;
       right: 10px;
+      font-size: 1.5rem;
       background: none;
       border: none;
-      font-size: 1.2rem;
-      color: var(--primary);
+      color: #ffc107;
       cursor: pointer;
     }
 
-    .chat-example {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: #222;
-      border-radius: 8px;
-      font-style: italic;
-    }
-
+    /* Notificação */
     .notification {
       position: fixed;
       bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--primary);
+      right: 20px;
+      background-color: #ffc107;
       color: black;
-      padding: 1rem 2rem;
-      border-radius: 8px;
+      padding: 12px 20px;
+      border-radius: 5px;
       display: none;
-      animation: fadeOut 2s forwards;
+      z-index: 9999;
+      animation: slideIn 0.3s ease forwards;
     }
 
-    @keyframes fadeOut {
-      from {opacity: 1;}
-      to {opacity: 0; visibility: hidden;}
+    @keyframes slideIn {
+      from { transform: translateX(100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
+      .bot-card {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">ChatBoyAI</div>
-  <nav>
-    <a href="#bots">Bots</a>
-  </nav>
-</header>
+  <header>
+    <!-- Botão Configurações -->
+    <div id="btnConfig" class="btn-config">
+      <span></span><span></span><span></span>
+    </div>
 
-<main>
-  <div class="container">
+    <!-- Carrinho -->
+    <div class="cart-icon" onclick="toggleCart()">
+      🛒
+      <div id="cartBadge" class="cart-badge">0</div>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo">ChatBoyAI</div>
+  </header>
+
+  <main class="container">
     <h1>Bem-vindo ao ChatBoyAI</h1>
     <p class="center">Escolha seu bot inteligente ideal para atendimento, segurança, tradução e automações.</p>
 
-    <section id="bots">
-      <div class="bots-container">
-        <!-- Bot Gratuito -->
-        <div class="bot-card free">
-          <div class="bot-icon">🤖</div>
-          <h3 class="bot-name">Bot Gratuito Básico</h3>
-          <div class="bot-price">Grátis</div>
-          <p class="bot-description">Atendimento rápido e simples para iniciantes.</p>
-          <div class="bot-actions">
-            <button disabled>Assinar</button>
-            <button onclick="showResponse('respostaBasico')">Ver Resposta</button>
-          </div>
+    <!-- Seção de Bots -->
+    <section id="bots" class="bots-container">
+      <!-- Bot Gratuito -->
+      <div class="bot-card free" data-bot="Basico" data-preco="0">
+        <div class="bot-icon">🤖</div>
+        <h3 class="bot-name">Bot Gratuito Básico</h3>
+        <div class="bot-price">Grátis</div>
+        <p class="bot-description">Atendimento rápido e simples para iniciantes.</p>
+        <div class="bot-actions">
+          <button disabled>Assinar</button>
+          <button onclick="showResponse('respostaBasico')">Ver Resposta</button>
         </div>
+      </div>
 
-        <!-- Bot Premium -->
-        <div class="bot-card premium">
-          <div class="bot-icon">💼</div>
-          <h3 class="bot-name">Bot de Atendimento Premium</h3>
-          <div class="bot-price">R$ 49,99/mês</div>
-          <p class="bot-description">Atendimento avançado com IA natural e respostas rápidas.</p>
-          <div class="bot-actions">
-            <button onclick="subscribe('Premium')">Assinar</button>
-            <button onclick="showResponse('respostaPremium')">Ver Resposta</button>
-          </div>
+      <!-- Bot Premium -->
+      <div class="bot-card premium" data-bot="Premium" data-preco="49.99">
+        <div class="bot-icon">💼</div>
+        <h3 class="bot-name">Bot de Atendimento Premium</h3>
+        <div class="bot-price">R$ 49,99/mês</div>
+        <p class="bot-description">Atendimento avançado com IA natural e respostas rápidas.</p>
+        <div class="bot-actions">
+          <button onclick="assinarBotao('Premium')">Assinar</button>
+          <button onclick="adicionarCarrinho('Premium', 49.99)">Adicionar ao Carrinho</button>
         </div>
+      </div>
 
-        <!-- Bot Segurança -->
-        <div class="bot-card premium">
-          <div class="bot-icon">🛡️</div>
-          <h3 class="bot-name">Bot de Segurança para Discord</h3>
-          <div class="bot-price">R$ 89,99/mês</div>
-          <p class="bot-description">Moderador automático e proteção contra spam e conteúdo impróprio.</p>
-          <div class="bot-actions">
-            <button onclick="subscribe('Discord')">Assinar</button>
-            <button onclick="showResponse('respostaSeguranca')">Ver Resposta</button>
-          </div>
+      <!-- Bot Segurança -->
+      <div class="bot-card premium" data-bot="Seguranca" data-preco="89.99">
+        <div class="bot-icon">🛡️</div>
+        <h3 class="bot-name">Bot de Segurança para Discord</h3>
+        <div class="bot-price">R$ 89,99/mês</div>
+        <p class="bot-description">Moderador automático e proteção contra spam e conteúdo impróprio.</p>
+        <div class="bot-actions">
+          <button onclick="assinarBotao('Seguranca')">Assinar</button>
+          <button onclick="adicionarCarrinho('Seguranca', 89.99)">Adicionar ao Carrinho</button>
         </div>
+      </div>
 
-        <!-- Bot Tradutor -->
-        <div class="bot-card premium">
-          <div class="bot-icon">🌍</div>
-          <h3 class="bot-name">Bot de Tradução Instantânea</h3>
-          <div class="bot-price">R$ 149,99/mês</div>
-          <p class="bot-description">Traduz conversas em tempo real para mais de 30 idiomas.</p>
-          <div class="bot-actions">
-            <button onclick="subscribe('Traducao')">Assinar</button>
-            <button onclick="showResponse('respostaTraducao')">Ver Resposta</button>
-          </div>
+      <!-- Bot Tradutor -->
+      <div class="bot-card premium" data-bot="Traducao" data-preco="149.99">
+        <div class="bot-icon">🌍</div>
+        <h3 class="bot-name">Bot de Tradução Instantânea</h3>
+        <div class="bot-price">R$ 149,99/mês</div>
+        <p class="bot-description">Traduz conversas em tempo real para mais de 30 idiomas.</p>
+        <div class="bot-actions">
+          <button onclick="assinarBotao('Traducao')">Assinar</button>
+          <button onclick="adicionarCarrinho('Traducao', 149.99)">Adicionar ao Carrinho</button>
         </div>
+      </div>
 
-        <!-- Bot Max -->
-        <div class="bot-card premium">
-          <div class="bot-icon">👑</div>
-          <h3 class="bot-name">ChatBoy Max</h3>
-          <div class="bot-price">R$ 299,99/mês</div>
-          <p class="bot-description">O melhor da IA: automação total, personalização e recursos exclusivos.</p>
-          <div class="bot-actions">
-            <button onclick="subscribe('Max')">Assinar</button>
-            <button onclick="showResponse('respostaMax')">Ver Resposta</button>
-          </div>
+      <!-- Bot Max -->
+      <div class="bot-card premium" data-bot="Max" data-preco="299.99">
+        <div class="bot-icon">👑</div>
+        <h3 class="bot-name">ChatBoy Max</h3>
+        <div class="bot-price">R$ 299,99/mês</div>
+        <p class="bot-description">O melhor da IA: automação total, personalização e recursos exclusivos.</p>
+        <div class="bot-actions">
+          <button onclick="assinarBotao('Max')">Assinar</button>
+          <button onclick="adicionarCarrinho('Max', 299.99)">Adicionar ao Carrinho</button>
         </div>
       </div>
     </section>
+  </main>
+
+  <!-- Modal de Resposta -->
+  <div class="response-modal" id="responseModal">
+    <div class="modal-content">
+      <h3>Exemplo de Resposta</h3>
+      <div class="chat-example" id="responseText"></div>
+      <button class="close-modal" onclick="hideResponse()">Fechar</button>
+    </div>
   </div>
-</main>
 
-<!-- Modal de Resposta -->
-<div class="response-modal" id="responseModal">
-  <div class="modal-content">
-    <button class="close-modal" onclick="hideResponse()">×</button>
-    <h3>Exemplo de Resposta</h3>
-    <div class="chat-example" id="responseText"></div>
-  </div>
-</div>
+  <!-- Notificação -->
+  <div id="notification" class="notification"></div>
 
-<!-- Notificação -->
-<div id="notification" class="notification"></div>
+  <!-- Sidebar de Configurações -->
+  <aside id="configSidebar" class="config-sidebar">
+    <button class="close-btn" onclick="fecharConfig()">×</button>
+    <nav class="menu-lateral">
+      <button onclick="abrirAba('comprados')">Bots Comprados</button>
+      <button onclick="abrirAba('testarGratis')">Testar Gratuitamente</button>
+      <button onclick="abrirAba('terminal')">Central de Comandos</button>
+      <button onclick="abrirAba('renomear')">Renomear Bot</button>
+      <button onclick="abrirAba('personalizar')">Personalização Visual</button>
+    </nav>
 
-<script>
-  function subscribe(plan) {
-    showNotification(`Você assinou o plano ${plan}!`);
-  }
+    <div class="conteudo-abas">
+      <div id="aba-comprados" class="aba-conteudo active">
+        <h3>Seus Bots Adquiridos</h3>
+        <ul id="listaBotsComprados"></ul>
+      </div>
 
-  function showResponse(botType) {
-    const responses = {
-      respostaBasico: "Olá! Como posso ajudar?",
-      respostaPremium: "Como posso otimizar sua experiência hoje?",
-      respostaSeguranca: "Mensagem bloqueada por conter linguagem imprópria.",
-      respostaTraducao: "Traduzindo: 'Hello' → 'Olá'",
-      respostaMax: "Sistema pronto. Comandos carregados. Pronto para uso completo."
-    };
+      <div id="aba-testarGratis" class="aba-conteudo">
+        <h3>Teste Grátis por 60 segundos</h3>
+        <textarea id="inputTeste" placeholder="Digite algo..."></textarea>
+        <button onclick="enviarMensagemTeste()">Enviar</button>
+        <div id="chatTeste" class="chat-teste"></div>
+      </div>
 
-    document.getElementById("responseText").innerText = responses[botType] || "Resposta não disponível.";
-    document.getElementById("responseModal").style.display = "flex";
-  }
+      <div id="aba-terminal" class="aba-conteudo">
+        <h3>Fake Terminal</h3>
+        <div class="terminal">
+          <div id="saidaTerminal" class="saida"></div>
+          <input type="text" id="entradaTerminal" placeholder="Digite um comando..." onkeydown="executarComando(event)">
+        </div>
+      </div>
 
-  function hideResponse() {
-    document.getElementById("responseModal").style.display = "none";
-  }
+      <div id="aba-renomear" class="aba-conteudo">
+        <h3>Renomear Bot Comprado</h3>
+        <select id="selecionarBotRenomear"></select>
+        <input type="text" id="novoNome" placeholder="Novo nome" />
+        <button onclick="renomearBot()">Salvar Nome</button>
+      </div>
 
-  function showNotification(message) {
-    const notif = document.getElementById("notification");
-    notif.innerText = message;
-    notif.style.display = "block";
-    setTimeout(() => notif.style.display = "none", 2000);
-  }
-</script>
+      <div id="aba-personalizar" class="aba-conteudo">
+        <h3>Personalização Visual</h3>
+        <select id="skinBot">
+          <option value="default">Default</option>
+          <option value="astronauta">Astronauta 🚀</option>
+          <option value="cyborg">Cyborg 💥</option>
+          <option value="neon">Neon 🔵</option>
+        </select>
+        <div id="previewSkin" class="preview-skin default">🤖</div>
+        <p id="descricaoSkin">Visual padrão do bot.</p>
+      </div>
+    </div>
+  </aside>
 
+  <script>
+    // Simulação de respostas
+    function showResponse(botType) {
+      const responses = {
+        respostaBasico: "Olá! Como posso ajudar?",
+        respostaPremium: "Como posso otimizar sua experiência hoje?",
+        respostaSeguranca: "Mensagem bloqueada por conter linguagem imprópria.",
+        respostaTraducao: "Traduzindo: 'Hello' → 'Olá'",
+        respostaMax: "Sistema pronto. Comandos carregados. Pronto para uso completo."
+      };
+
+      document.getElementById("responseText").innerText = responses[botType] || "Resposta não disponível.";
+      document.getElementById("responseModal").style.display = "flex";
+    }
+
+    function hideResponse() {
+      document.getElementById("responseModal").style.display = "none";
+    }
+
+    // Notificações
+    function showNotification(message) {
+      const notif = document.getElementById("notification");
+      notif.innerText = message;
+      notif.style.display = "block";
+      setTimeout(() => notif.style.display = "none", 2000);
+    }
+
+    // Configurações
+    window.addEventListener("DOMContentLoaded", () => {
+      const btnConfig = document.getElementById("btnConfig");
+      const sidebar = document.getElementById("configSidebar");
+
+      if (!btnConfig || !sidebar) return;
+
+      btnConfig.addEventListener("click", () => {
+        fecharCart();
+        sidebar.classList.toggle("active");
+      });
+
+      fecharConfig();
+    });
+
+    function fecharConfig() {
+      document.getElementById("configSidebar").classList.remove("active");
+    }
+
+    function abrirAba(id) {
+      document.querySelectorAll(".aba-conteudo").forEach(el => el.classList.remove("active"));
+      document.getElementById(`aba-${id}`).classList.add("active");
+    }
+
+    // Assinaturas
+    function assinarBotao(nomeBot) {
+      let bots = JSON.parse(localStorage.getItem("botsComprados") || "[]");
+      if (!bots.includes(nomeBot)) {
+        bots.push(nomeBot);
+        localStorage.setItem("botsComprados", JSON.stringify(bots));
+        showNotification(`Você comprou o bot ${nomeBot}!`);
+        atualizarListaBots();
+        preencherSelectRenomear();
+      } else {
+        showNotification(`Você já possui o bot ${nomeBot}.`);
+      }
+    }
+
+    function atualizarListaBots() {
+      const lista = document.getElementById("listaBotsComprados");
+      lista.innerHTML = "";
+      const bots = JSON.parse(localStorage.getItem("botsComprados") || "[]");
+      bots.forEach(bot => {
+        const li = document.createElement("li");
+        li.textContent = bot;
+        lista.appendChild(li);
+      });
+    }
+
+    // Carrinho
+    function adicionarCarrinho(nome, preco) {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.push({ nome, preco });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      showNotification(`Bot "${nome}" adicionado ao carrinho.`);
+      atualizarCarrinho();
+    }
+
+    function atualizarCarrinho() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const list = document.getElementById("cartList");
+      const total = document.getElementById("cartTotal");
+      const badge = document.getElementById("cartBadge");
+      let soma = 0;
+
+      list.innerHTML = "";
+      cart.forEach((item, i) => {
+        const li = document.createElement("li");
+        li.className = "cart-item";
+        li.innerHTML = `
+          ${item.nome} — R$ ${parseFloat(item.preco).toFixed(2)}
+          <button onclick="removerDoCarrinho(${i})">×</button>
+        `;
+        list.appendChild(li);
+        soma += parseFloat(item.preco);
+      });
+
+      total.textContent = `Total: R$ ${soma.toFixed(2)}`;
+      badge.textContent = cart.length > 0 ? cart.length : "";
+    }
+
+    function removerDoCarrinho(index) {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      atualizarCarrinho();
+    }
+
+    function finalizarCompra() {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (cart.length === 0) {
+        showNotification("Seu carrinho está vazio.");
+        return;
+      }
+
+      showNotification("Compra finalizada com sucesso!");
+      localStorage.removeItem("cart");
+      atualizarCarrinho();
+      toggleCart(false);
+    }
+
+    function toggleCart(forceClose = false) {
+      const modal = document.getElementById("cartModal");
+      fecharConfig();
+      modal.style.display = forceClose ? "none" : (modal.style.display === "block" ? "none" : "block");
+    }
+
+    function fecharCart() {
+      document.getElementById("cartModal").style.display = "none";
+    }
+
+    // Teste grátis
+    let timerTeste = null;
+    function enviarMensagemTeste() {
+      const input = document.getElementById("inputTeste").value.trim();
+      if (!input) return;
+
+      const chat = document.getElementById("chatTeste");
+      chat.innerHTML += `<div><b>Você:</b> ${input}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+
+      if (!timerTeste) {
+        timerTeste = setTimeout(() => {
+          chat.innerHTML += `<div><b>Bot:</b> Tempo de teste expirado.</div>`;
+        }, 60000);
+      }
+
+      setTimeout(() => {
+        chat.innerHTML += `<div><b>Bot:</b> Resposta simulada: '${input}' recebida.</div>`;
+        chat.scrollTop = chat.scrollHeight;
+      }, 1000);
+    }
+
+    // Renomear bot
+    function preencherSelectRenomear() {
+      const select = document.getElementById("selecionarBotRenomear");
+      select.innerHTML = "";
+      const bots = JSON.parse(localStorage.getItem("botsComprados") || "[]");
+      bots.forEach(bot => {
+        const option = document.createElement("option");
+        option.value = bot;
+        option.textContent = bot;
+        select.appendChild(option);
+      });
+    }
+
+    function renomearBot() {
+      const bot = document.getElementById("selecionarBotRenomear").value;
+      const novoNome = document.getElementById("novoNome").value.trim();
+      if (!bot || !novoNome) return;
+
+      let nomes = JSON.parse(localStorage.getItem("nomesCustomizados") || "{}");
+      nomes[bot] = novoNome;
+      localStorage.setItem("nomesCustomizados", JSON.stringify(nomes));
+      showNotification(`Bot ${bot} renomeado para ${novoNome}`);
+    }
+
+    // Personalização visual
+    document.getElementById("skinBot").addEventListener("change", function () {
+      const skin = this.value;
+      const preview = document.getElementById("previewSkin");
+      const descricao = document.getElementById("descricaoSkin");
+
+      switch (skin) {
+        case "astronauta":
+          preview.className = "preview-skin astronauta"; preview.textContent = "🚀";
+          descricao.textContent = "Visual de astronauta espacial.";
+          break;
+        case "cyborg":
+          preview.className = "preview-skin cyborg"; preview.textContent = "🤖";
+          descricao.textContent = "Visual cibernético futurista.";
+          break;
+        case "neon":
+          preview.className = "preview-skin neon"; preview.textContent = "💡";
+          descricao.textContent = "Visual neon brilhante.";
+          break;
+        default:
+          preview.className = "preview-skin default"; preview.textContent = "🤖";
+          descricao.textContent = "Visual padrão do bot.";
+      }
+    });
+
+    // Terminal fake
+    function executarComando(e) {
+      if (e.key !== "Enter") return;
+
+      const input = document.getElementById("entradaTerminal");
+      const saida = document.getElementById("saidaTerminal");
+      const cmd = input.value.trim().toLowerCase();
+
+      saida.innerHTML += `<div>> ${cmd}</div>`;
+
+      if (cmd === "!help") {
+        saida.innerHTML += `<div>[!] Comandos disponíveis: !help, !ping</div>`;
+      } else if (cmd === "!ping") {
+        saida.innerHTML += `<div>[+] Pong!</div>`;
+      } else {
+        saida.innerHTML += `<div>[x] Comando desconhecido.</div>`;
+      }
+
+      input.value = "";
+      saida.scrollTop = saida.scrollHeight;
+    }
+
+    // Inicialização
+    atualizarListaBots();
+    preencherSelectRenomear();
+    atualizarCarrinho();
+  </script>
 </body>
 </html>
