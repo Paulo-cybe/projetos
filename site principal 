@@ -19,7 +19,6 @@
       overflow-x: hidden;
     }
 
-    /* Header */
     header {
       position: relative;
       text-align: center;
@@ -88,6 +87,7 @@
       text-align: center;
     }
 
+    /* Modal do Carrinho */
     .cart-modal {
       display: none;
       position: fixed;
@@ -418,6 +418,14 @@
   <!-- Notificação -->
   <div id="notification" class="notification"></div>
 
+  <!-- Carrinho Modal -->
+  <div id="cartModal" class="cart-modal">
+    <h3>Seu Carrinho</h3>
+    <ul id="cartList"></ul>
+    <div class="cart-total" id="cartTotal">Total: R$ 0,00</div>
+    <button class="cart-checkout" onclick="finalizarCompra()">Finalizar Compra</button>
+  </div>
+
   <!-- Sidebar de Configurações -->
   <aside id="configSidebar" class="config-sidebar">
     <button class="close-btn" onclick="fecharConfig()">×</button>
@@ -678,7 +686,7 @@
           preview.className = "preview-skin default"; preview.textContent = "🤖";
           descricao.textContent = "Visual padrão do bot.";
       }
-    });
+    }
 
     // Terminal fake
     function executarComando(e) {
