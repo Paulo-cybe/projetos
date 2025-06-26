@@ -684,36 +684,4 @@
           break;
         default:
           preview.className = "preview-skin default"; preview.textContent = "🤖";
-          descricao.textContent = "Visual padrão do bot.";
-      }
-    }
-
-    // Terminal fake
-    function executarComando(e) {
-      if (e.key !== "Enter") return;
-
-      const input = document.getElementById("entradaTerminal");
-      const saida = document.getElementById("saidaTerminal");
-      const cmd = input.value.trim().toLowerCase();
-
-      saida.innerHTML += `<div>> ${cmd}</div>`;
-
-      if (cmd === "!help") {
-        saida.innerHTML += `<div>[!] Comandos disponíveis: !help, !ping</div>`;
-      } else if (cmd === "!ping") {
-        saida.innerHTML += `<div>[+] Pong!</div>`;
-      } else {
-        saida.innerHTML += `<div>[x] Comando desconhecido.</div>`;
-      }
-
-      input.value = "";
-      saida.scrollTop = saida.scrollHeight;
-    }
-
-    // Inicialização
-    atualizarListaBots();
-    preencherSelectRenomear();
-    atualizarCarrinho();
-  </script>
-</body>
-</html>
+          descricao.textContent = "V
