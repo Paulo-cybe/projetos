@@ -1,106 +1,417 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ChatBoyAI - Bots Inteligentes</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBoyAI - O Futuro dos Bots</title>
+    <meta name="description" content="ChatBoyAI - Bots inteligentes personalizados para Discord. Atendimento, segurança, tradução e muito mais!">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Intro.js -->
+    <link href="https://unpkg.com/intro.js/minified/introjs.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/><circle cx='9' cy='9' r='1' fill='white'/><circle cx='15' cy='9' r='1' fill='white'/></svg>" type="image/svg+xml">
 </head>
 <body>
-
-  <header>
-    <div class="logo">ChatBoyAI</div>
-    <nav>
-      <a href="#bots">Bots</a>
-    </nav>
-  </header>
-
-  <main>
-    <div class="container">
-      <h1>Bem-vindo ao ChatBoyAI</h1>
-      <p class="center">Escolha seu bot inteligente ideal para atendimento, segurança, tradução e automações.</p>
-
-      <section id="bots">
-        <div class="bots-container">
-
-          <!-- Bot Gratuito -->
-          <div class="bot-card free">
-            <div class="bot-icon">🤖</div>
-            <h3 class="bot-name">Bot Gratuito Básico</h3>
-            <div class="bot-price">Grátis</div>
-            <p class="bot-description">Atendimento rápido e simples para iniciantes.</p>
-            <div class="bot-actions">
-              <button disabled>Assinar</button>
-              <button onclick="showResponse('respostaBasico')">Ver Resposta</button>
+    <!-- Intro Animation -->
+    <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-content">
+            <div class="bot-avatar">
+                <i class="fas fa-robot"></i>
             </div>
-          </div>
-
-          <!-- Bot Premium -->
-          <div class="bot-card premium">
-            <div class="bot-icon">💼</div>
-            <h3 class="bot-name">Bot de Atendimento Premium</h3>
-            <div class="bot-price">R$ 49,99/mês</div>
-            <p class="bot-description">Atendimento avançado com IA natural e respostas rápidas.</p>
-            <div class="bot-actions">
-              <button onclick="subscribe('Premium')">Assinar</button>
-              <button onclick="showResponse('respostaPremium')">Ver Resposta</button>
+            <div class="intro-text">
+                <h1 id="intro-message" class="intro-message"></h1>
             </div>
-          </div>
-
-          <!-- Bot Segurança -->
-          <div class="bot-card premium">
-            <div class="bot-icon">🛡️</div>
-            <h3 class="bot-name">Bot de Segurança para Discord</h3>
-            <div class="bot-price">R$ 89,99/mês</div>
-            <p class="bot-description">Moderador automático e proteção contra spam e conteúdo impróprio.</p>
-            <div class="bot-actions">
-              <button onclick="subscribe('Discord')">Assinar</button>
-              <button onclick="showResponse('respostaSeguranca')">Ver Resposta</button>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
             </div>
-          </div>
-
-          <!-- Bot Tradutor -->
-          <div class="bot-card premium">
-            <div class="bot-icon">🌍</div>
-            <h3 class="bot-name">Bot de Tradução Instantânea</h3>
-            <div class="bot-price">R$ 149,99/mês</div>
-            <p class="bot-description">Traduz conversas em tempo real para mais de 30 idiomas.</p>
-            <div class="bot-actions">
-              <button onclick="subscribe('Traducao')">Assinar</button>
-              <button onclick="showResponse('respostaTraducao')">Ver Resposta</button>
-            </div>
-          </div>
-
-          <!-- Bot Max -->
-          <div class="bot-card premium">
-            <div class="bot-icon">👑</div>
-            <h3 class="bot-name">ChatBoy Max</h3>
-            <div class="bot-price">R$ 299,99/mês</div>
-            <p class="bot-description">O melhor da IA: automação total, personalização e recursos exclusivos.</p>
-            <div class="bot-actions">
-              <button onclick="subscribe('Max')">Assinar</button>
-              <button onclick="showResponse('respostaMax')">Ver Resposta</button>
-            </div>
-          </div>
-
         </div>
-      </section>
     </div>
-  </main>
 
-  <!-- Modal de Resposta -->
-  <div class="response-modal" id="responseModal">
-    <div class="modal-content">
-      <button class="close-modal" onclick="hideResponse()">×</button>
-      <h3>Exemplo de Resposta</h3>
-      <div class="chat-example" id="responseText"></div>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand" data-intro="Este é o ChatBoyAI - sua loja de bots inteligentes!" data-step="1">
+                    <div class="brand-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <span class="brand-text">ChatBoy<span class="ai-text">AI</span></span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#bots" class="nav-link">Bots</a>
+                    <a href="#skins" class="nav-link">Skins</a>
+                    <a href="#precos" class="nav-link">Preços</a>
+                    <a href="#chat" class="nav-link">Testar</a>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="#bots" class="mobile-link">Bots</a>
+                <a href="#skins" class="mobile-link">Skins</a>
+                <a href="#precos" class="mobile-link">Preços</a>
+                <a href="#chat" class="mobile-link">Testar</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <div class="circuit-pattern"></div>
+            <div class="floating-particles"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content" data-aos="fade-up" data-aos-delay="500">
+                <h1 class="hero-title">
+                    O Futuro dos <span class="gradient-text">Bots</span> está aqui
+                </h1>
+                <p class="hero-subtitle">
+                    Bots inteligentes personalizados para Discord com IA avançada. 
+                    Atendimento, segurança, tradução e muito mais.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="startTour()">
+                        <i class="fas fa-play"></i> Começar Tour
+                    </button>
+                    <a href="#bots" class="btn-secondary">
+                        <i class="fas fa-robot"></i> Ver Bots
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Bot Cards -->
+    <section id="bots" class="bots-section" data-intro="Aqui estão nossos bots disponíveis. Clique em qualquer um para ver mais detalhes!" data-step="2">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">
+                Nossos <span class="gradient-text">Bots</span>
+            </h2>
+            
+            <div class="bots-grid">
+                <!-- ChatBoy Free -->
+                <div class="bot-card free" data-aos="fade-up" data-aos-delay="100" onclick="openBotModal('free')">
+                    <div class="card-header">
+                        <div class="bot-icon free-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <h3 class="bot-name">ChatBoy Free</h3>
+                        <p class="bot-price">Gratuito</p>
+                    </div>
+                    <div class="card-body">
+                        <p class="bot-description">Acesso básico ao universo ChatBoy</p>
+                        <div class="features-preview">
+                            <span class="feature-tag">Básico</span>
+                            <span class="feature-tag">Grátis</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-card">Ver Detalhes</button>
+                    </div>
+                </div>
+
+                <!-- ChatBoy Atendimento -->
+                <div class="bot-card atendimento" data-aos="fade-up" data-aos-delay="200" onclick="openBotModal('atendimento')">
+                    <div class="card-header">
+                        <div class="bot-icon atendimento-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="bot-name">ChatBoy Atendimento</h3>
+                        <p class="bot-price">R$49,99<span>/mês</span></p>
+                    </div>
+                    <div class="card-body">
+                        <p class="bot-description">Suporte automático inteligente</p>
+                        <div class="features-preview">
+                            <span class="feature-tag">Suporte 24/7</span>
+                            <span class="feature-tag">IA</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-card">Ver Detalhes</button>
+                    </div>
+                </div>
+
+                <!-- ChatBoy Segurança -->
+                <div class="bot-card seguranca" data-aos="fade-up" data-aos-delay="300" onclick="openBotModal('seguranca')">
+                    <div class="card-header">
+                        <div class="bot-icon seguranca-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="bot-name">ChatBoy Segurança</h3>
+                        <p class="bot-price">R$89,99<span>/mês</span></p>
+                    </div>
+                    <div class="card-body">
+                        <p class="bot-description">Proteção completa do servidor</p>
+                        <div class="features-preview">
+                            <span class="feature-tag">Anti-spam</span>
+                            <span class="feature-tag">Moderação</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-card">Ver Detalhes</button>
+                    </div>
+                </div>
+
+                <!-- ChatBoy Tradutor -->
+                <div class="bot-card tradutor" data-aos="fade-up" data-aos-delay="400" onclick="openBotModal('tradutor')">
+                    <div class="card-header">
+                        <div class="bot-icon tradutor-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="bot-name">ChatBoy Tradutor</h3>
+                        <p class="bot-price">R$149,99<span>/mês</span></p>
+                    </div>
+                    <div class="card-body">
+                        <p class="bot-description">Tradução em tempo real</p>
+                        <div class="features-preview">
+                            <span class="feature-tag">Multi-idioma</span>
+                            <span class="feature-tag">Tempo Real</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-card">Ver Detalhes</button>
+                    </div>
+                </div>
+
+                <!-- ChatBoy Max -->
+                <div class="bot-card max popular" data-aos="fade-up" data-aos-delay="500" onclick="openBotModal('max')">
+                    <div class="popular-badge">Mais Popular</div>
+                    <div class="card-header">
+                        <div class="bot-icon max-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3 class="bot-name">ChatBoy Max</h3>
+                        <p class="bot-price">R$299,99<span>/mês</span></p>
+                    </div>
+                    <div class="card-body">
+                        <p class="bot-description">O bot mais completo</p>
+                        <div class="features-preview">
+                            <span class="feature-tag">Completo</span>
+                            <span class="feature-tag">Premium</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-card">Ver Detalhes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Chat Simulation -->
+    <section id="chat" class="chat-section" data-intro="Teste nosso bot aqui! Digite uma mensagem e veja como ele responde." data-step="3">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">
+                Teste o <span class="gradient-text">ChatBoy</span>
+            </h2>
+            
+            <div class="chat-container" data-aos="fade-up" data-aos-delay="200">
+                <div class="chat-header">
+                    <div class="chat-bot-info">
+                        <div class="chat-bot-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="chat-bot-details">
+                            <span class="chat-bot-name">ChatBoy AI</span>
+                            <span class="chat-bot-status online">Online</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Olá! Sou o ChatBoy AI. Como posso te ajudar hoje? 😊</p>
+                            <span class="message-time">Agora</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Digite sua mensagem...">
+                    <button class="chat-send-btn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bot Skins Gallery -->
+    <section id="skins" class="skins-section" data-intro="Personalize a aparência do seu bot com nossos temas exclusivos!" data-step="4">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">
+                Skins <span class="gradient-text">Exclusivas</span>
+            </h2>
+            
+            <div class="skins-grid">
+                <div class="skin-card" data-aos="fade-up" data-aos-delay="100" onclick="selectSkin('hacker')">
+                    <div class="skin-preview hacker-theme">
+                        <div class="skin-bot">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                    </div>
+                    <h3 class="skin-name">Hacker</h3>
+                    <p class="skin-description">Tema futurístico verde</p>
+                    <button class="skin-select-btn">Selecionar</button>
+                </div>
+                
+                <div class="skin-card" data-aos="fade-up" data-aos-delay="200" onclick="selectSkin('cute')">
+                    <div class="skin-preview cute-theme">
+                        <div class="skin-bot">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <h3 class="skin-name">Fofo</h3>
+                    <p class="skin-description">Tema colorido e amigável</p>
+                    <button class="skin-select-btn">Selecionar</button>
+                </div>
+                
+                <div class="skin-card" data-aos="fade-up" data-aos-delay="300" onclick="selectSkin('corporate')">
+                    <div class="skin-preview corporate-theme">
+                        <div class="skin-bot">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <h3 class="skin-name">Corporativo</h3>
+                    <p class="skin-description">Tema profissional</p>
+                    <button class="skin-select-btn">Selecionar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Center -->
+    <section id="precos" class="pricing-section" data-intro="Compare todos os planos e escolha o melhor para você!" data-step="5">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">
+                Planos e <span class="gradient-text">Preços</span>
+            </h2>
+            
+            <div class="pricing-table" data-aos="fade-up" data-aos-delay="200">
+                <div class="pricing-features">
+                    <div class="feature-row header-row">
+                        <div class="feature-name">Recursos</div>
+                        <div class="plan-column">Free</div>
+                        <div class="plan-column">Atendimento</div>
+                        <div class="plan-column">Segurança</div>
+                        <div class="plan-column">Tradutor</div>
+                        <div class="plan-column popular-column">Max</div>
+                    </div>
+                    
+                    <div class="feature-row">
+                        <div class="feature-name">Comandos Básicos</div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                    </div>
+                    
+                    <div class="feature-row">
+                        <div class="feature-name">Suporte IA</div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                    </div>
+                    
+                    <div class="feature-row">
+                        <div class="feature-name">Moderação</div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                    </div>
+                    
+                    <div class="feature-row">
+                        <div class="feature-name">Tradução</div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-times"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                        <div class="plan-column"><i class="fas fa-check"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Links -->
+    <section class="social-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">
+                Conecte-se <span class="gradient-text">Conosco</span>
+            </h2>
+            
+            <div class="social-links" data-aos="fade-up" data-aos-delay="200">
+                <a href="#" class="social-link discord" data-intro="Entre no nosso servidor Discord!" data-step="6">
+                    <i class="fab fa-discord"></i>
+                    <span>Discord</span>
+                </a>
+                <a href="#" class="social-link instagram">
+                    <i class="fab fa-instagram"></i>
+                    <span>@chatboy2</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Purchase Button -->
+    <div class="floating-purchase" data-intro="Use este botão para adquirir qualquer bot rapidamente!" data-step="7">
+        <button class="floating-btn" onclick="openPurchaseModal()">
+            <i class="fas fa-shopping-cart"></i>
+            <span>💡 Adquirir Bot</span>
+        </button>
     </div>
-  </div>
 
-  <!-- Notificação -->
-  <div id="notification" class="notification"></div>
-  
+    <!-- Bot Modal -->
+    <div id="botModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBotModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
-</body>
-</html>
+    <!-- Purchase Modal -->
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePurchaseModal()">&times;</span>
+            <div class="purchase-form">
+                <h3>Adquirir Bot</h3>
+                <form id="purchaseForm">
+                    <div class="form-group">
+                        <label>Selecione o Bot:</label>
+                        <select id="botSelect">
+                            <option value="free">ChatBoy Free - Gratuito</option>
+                            <option value="atendimento">ChatBoy Atendimento - R$49,99/mês</option>
+                            <option value="seguranca">ChatBoy Segurança - R$89,99/mês</option>
+                            <option value="tradutor">ChatBoy Tradutor - R$149,99/mês</option>
+                            <option value="max">ChatBoy Max - R$299,99/mês</option>
+                        </select>
+          
