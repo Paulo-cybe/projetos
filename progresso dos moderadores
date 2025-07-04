@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard Moderadores & Bots</title>
+  <style>
+    :root {
+      --bg-dark: #0f111a;
+      --card-bg: #161a25;
+      --text-color: #e0e0e0;
+      --accent-color: #7c3aed;
+      --accent-hover: #5b21b6;
+      --border-radius: 12px;
+      --transition-speed: 0.3s;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      margin: 0;
+      padding: 20px;
+      color: var(--text-color);
+    }
+
+    h1, h2, h3 {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.2);
+    }
+
+    .stat-title {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    .section {
+      background: var(--card-bg);
+      padding: 20px 25px;
+      margin-bottom: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.2);
+    }
+
+    .filter-input {
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 15px;
+      border-radius: var(--border-radius);
+      border: none;
+      outline: none;
+      background-color: #1f2330;
+      color: white;
+      font-size: 1rem;
+      transition: background-color var(--transition-speed);
+    }
+
+    .filter-input::placeholder {
+      color: #aaa;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #2d313e;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--accent-color);
+      font-size: 0.95rem;
+      text-transform: uppercase;
+    }
+
+    .progress-bar {
+      background: #2d313e;
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+      height: 10px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--accent-color), var(--accent-hover));
+      width: 0;
+      transition: width var(--transition-speed) ease-in-out;
+    }
+
+    .status-online {
+      color: #10b981;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .status-online::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .status-offline {
+      color: #ef4444;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .status-offline::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: var(--accent-color);
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 10px;
+      transition: color var(--transition-speed);
+    }
+
+    .action-btn:hover {
+      color: var(--accent-hover);
+    }
+
+    ul#atividadesList {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 10px;
+    }
+
+    ul#atividadesList li {
+      padding: 8px 0;
+      border-bottom: 1px solid #2d313e;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    @media (max-width: 600px) {
+      .section {
+        padding: 15px;
+      }
+
+      .filter-input {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard Moderadores & Bots</h1>
+
+    <!-- Estatísticas -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-title">Usuários no Discord</div>
+        <div class="stat-value" id="usuariosDiscord">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Faturamento Total (R$)</div>
+        <div class="stat-value" id="faturamentoTotal">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Bots Vendidos</div>
+        <div class="stat-value" id="totalBotsVendidos">0</div>
+      </div>
+    </div>
+
+    <!-- Moderadores -->
+    <div class="section" id="moderadores-section">
+      <h2>Moderadores Ativos</h2>
+      <input type="text" class="filter-input" placeholder="Filtrar por nome..." id="filterModeradores" />
+      <table id="moderadoresTable">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Atividade</th>
+            <th>Progresso</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Bots -->
+    <div class="section" id="bots-section">
+      <h2>Resumo de Bots Comprados</h2>
+      <table id="botsTable">
+        <thead>
+          <tr>
+            <th>Bot</th>
+            <th>Compras Recentes</th>
+            <th>Popularidade (%)</th>
+            <th>Faturamento (R$)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Atividades -->
+    <div class="section" id="atividades-section">
+      <h2>Atividades Recentes</h2>
+      <ul id="atividadesList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Dados dos moderadores
+    const moderadores = [
+      { nome: '...', atividade: 'Revisando código do bot', progresso: 80, status: 'online' },
+      { nome: '...', atividade: 'Testando bot de WhatsApp', progresso: 45, status: 'offline' },
+      { nome: '...', atividade: 'Atualizando documentação', progresso: 100, status: 'online' },
+      { nome: '...', atividade: 'Monitorando vendas', progresso: 60, status: 'online' },
+    ];
+
+    // Novos bots conforme solicitado
+    const bots = [
+      { nome: 'Demon – Bot de conversa com IA, versão básica.', comprasRecentes: 15, popularidade: 30, preco: 99 },
+      { nome: 'Demon Atendimento – Bot para atendimento automatizado.', comprasRecentes: 10, popularidade: 20, preco: 149 },
+      { nome: 'Demon Segurança – Bot com foco em segurança e verificação.', comprasRecentes: 8, popularidade: 15, preco: 199 },
+      { nome: 'Demon Tradutor – Bot tradutor multilíngue com IA.', comprasRecentes: 7, popularidade: 12, preco: 129 },
+      { nome: 'Demon Max – Versão avançada com múltiplas funções.', comprasRecentes: 12, popularidade: 18, preco: 249 },
+      { nome: 'Verdadex – Bot detector de manipulação.', comprasRecentes: 5, popularidade: 5, preco: 179 },
+    ];
+
+    // Atividades recentes
+    const atividades = [
+      'João finalizou a revisão do código do ChatBoy Segurança.',
+      'Maria testou o novo módulo do ChatBoy Atendimento.',
+      'Cliente Carlos comprou o ChatBoy Max.',
+      'Pedro atualizou o manual do usuário do ChatBoy Free.',
+      'Ana monitorou 5 vendas nas últimas 2 horas.',
+    ];
+
+    // Preencher tabela moderadores
+    const tbodyMod = document.querySelector('#moderadoresTable tbody');
+    function preencherModeradores() {
+      tbodyMod.innerHTML = '';
+      moderadores.forEach((m, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${m.nome}</td>
+          <td>${m.atividade}</td>
+          <td>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${m.progresso}%;"></div>
+            </div>
+          </td>
+          <td class="status-${m.status}">${m.status.charAt(0).toUpperCase() + m.status.slice(1)}</td>
+          <td>
+            <button class="action-btn" onclick="resetarAtividade(${index})">Resetar</button>
+            <button class="action-btn" onclick="bloquearModerador(${index})">Bloquear</button>
+          </td>
+        `;
+        tbodyMod.appendChild(tr);
+
+        setTimeout(() => {
+          const fill = tr.querySelector('.progress-fill');
+          fill.style.width = `${m.progresso}%`;
+        }, 200);
+      });
+    }
+
+    function resetarAtividade(index) {
+      alert(`Atividade de ${moderadores[index].nome} foi reiniciada.`);
+      moderadores[index].atividade = "Atividade reiniciada";
+      moderadores[index].progresso = 0;
+      preencherModeradores();
+    }
+
+    function bloquearModerador(index) {
+      if (confirm(`Tem certeza que deseja bloquear ${moderadores[index].nome}?`)) {
+        moderadores[index].status = moderadores[index].status === 'online' ? 'offline' : 'online';
+        preencherModeradores();
+      }
+    }
+
+    // Filtrar moderadores
+    document.getElementById('filterModeradores').addEventListener('input', function () {
+      const filtro = this.value.toLowerCase();
+      const linhas = tbodyMod.querySelectorAll('tr');
+      linhas.forEach(linha => {
+        const nome = linha.cells[0].textContent.toLowerCase();
+        linha.style.display = nome.includes(filtro) ? '' : 'none';
+      });
+    });
+
+    // Preencher tabela bots
+    const tbodyBots = document.querySelector('#botsTable tbody');
+    function preencherBots() {
+      tbodyBots.innerHTML = '';
+      let totalVendas = 0;
+      let faturamentoTotal = 0;
+
+      bots.forEach(bot => {
+        const faturamento = bot.comprasRecentes * bot.preco;
+        totalVendas += bot.comprasRecentes;
+        faturamentoTotal += faturamento;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${bot.nome}</td>
+          <td>${bot.comprasRecentes}</td>
+          <td>${bot.popularidade}%</td>
+          <td>R$ ${faturamento.toFixed(2)}</td>
+        `;
+        tbodyBots.appendChild(tr);
+      });
+
+      document.getElementById('totalBotsVendidos').textContent = totalVendas;
+      document.getElementById('faturamentoTotal').textContent = faturamentoTotal.toFixed(2);
+      document.getElementById('usuariosDiscord').textContent = '12.450'; // Simulado
+    }
+
+    // Preencher atividades recentes
+    const ulAtividades = document.getElementById('atividadesList');
+    function preencherAtividades() {
+      ulAtividades.innerHTML = '';
+      atividades.forEach(act => {
+        const li = document.createElement('li');
+        li.textContent = act;
+        ulAtividades.appendChild(li);
+      });
+    }
+
+    // Inicializar dashboard
+    preencherModeradores();
+    preencherBots();
+    preencherAtividades();
+  </script>
+</body>
+</html>
