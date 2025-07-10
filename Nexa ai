@@ -1,0 +1,276 @@
+#========== INSTALAR DEPENDÊNCIAS ==========
+!apt-get install -y tesseract-ocr
+!pip install -q pdfminer.six pytesseract textblob nltk spacy PyPDF2 opencv-python python-telegram-bot==20.3 requests nest_asyncio PyMuPDF
+
+!python -m textblob.download_corpora
+!python -m spacy download en_core_web_sm
+
+#========== IMPORTS ==========
+import os
+import nest_asyncio
+nest_asyncio.apply()
+
+import pytesseract
+import requests
+import nltk
+import spacy
+import hashlib
+import urllib.parse
+import json
+
+from PIL import Image
+from io import BytesIO
+from PyPDF2 import PdfReader
+from textblob import TextBlob
+
+from telegram import Update, Document
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
+
+from bs4 import BeautifulSoup
+import fitz  # PyMuPDF
+
+#========== MODELO NLP ==========
+nlp = spacy.load("en_core_web_sm")
+
+#========== MEMÓRIA ==========
+memoria = {}
+cache_pdf = {}
+dl_path = "/content/pdf_analisados"
+os.makedirs(dl_path, exist_ok=True)
+
+def adicionar_memoria(user_id, role, content):
+    if user_id not in memoria:
+        memoria[user_id] = []
+    memoria[user_id].append({"role": role, "content": content})
+
+def obter_memoria(user_id):
+    return memoria.get(user_id, [])[-6:]
+
+#========== CONFIGS ==========
+TOKEN = "7898674342:AAEhm46yQbAcnq-P-j8rlpOfXZiKQDbuqvc"
+OPENROUTER_API_KEY = "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"
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+def chamar_llama_openrouter(user_id, nova_mensagem):
+    try:
+        adicionar_memoria(user_id, "user", nova_mensagem)
+
+        mensagens = [{
+            "role": "system",
+            "content": (
+                "Você é a Nexa, uma IA avançada da Demon Systems. Sua identidade é feminina, profissional e estratégica.\n\n"
+                "🧠 Suas especialidades incluem: análise de PDF, OCR, sentimentos, buscas web, etc.\n"
+                "Sempre fale em português direto e elegante."
+            )
+        }] + obter_memoria(user_id)
+
+        payload = {
+            "model": "meta-llama/llama-3-70b-instruct",
+            "messages": mensagens,
+            "temperature": 0.5,
+            "max_tokens": 400
+        }
+
+        HEADERS = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(OPENROUTER_URL, headers=HEADERS, json=payload, timeout=20)
+        data = response.json()
+
+        if "choices" in data:
+            resposta = data["choices"][0]["message"]["content"]
+            adicionar_memoria(user_id, "assistant", resposta)
+            return resposta
+        elif "error" in data:
+            return f"[Erro OpenRouter] {data['error'].get('message', 'Erro desconhecido')}"
+        else:
+            return f"[Erro inesperado] Resposta: {data}"
+    except Exception as e:
+        return f"Erro ao chamar a IA: {e}"
+
+def buscar_wikipedia(termo):
+    try:
+        termo_url = termo.strip().replace(" ", "_")
+        url = f"https://pt.wikipedia.org/wiki/{termo_url}"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+        if resp.status_code != 200:
+            return None
+        soup = BeautifulSoup(resp.text, "html.parser")
+        for tag in soup(["script", "style", "header", "footer", "nav", "aside", "table", "img"]):
+            tag.decompose()
+        textos = soup.find_all("p")
+        conteudo = ""
+        for p in textos:
+            if p.text.strip():
+                conteudo += p.text.strip() + "\n"
+            if len(conteudo) > 3500:
+                break
+        return conteudo if conteudo else None
+    except:
+        return None
+
+def buscar_google_simples(termo):
+    try:
+        query = urllib.parse.quote(termo)
+        url = f"https://www.google.com/search?q={query}"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        resp = requests.get(url, headers=headers, timeout=10)
+        if resp.status_code != 200:
+            return None
+        soup = BeautifulSoup(resp.text, "html.parser")
+        resultados = []
+        for g in soup.find_all('div', class_='tF2Cxc')[:5]:
+            titulo = g.find('h3')
+            snippet = g.find('div', class_='IsZvec')
+            if titulo and snippet:
+                resultados.append(f"{titulo.text}: {snippet.text}")
+        return "\n\n".join(resultados) if resultados else None
+    except:
+        return None
+
+def convert_pdf_to_images(pdf_bytes):
+    images = []
+    try:
+        doc = fitz.open("pdf", pdf_bytes)
+        for page in doc:
+            pix = page.get_pixmap(dpi=200)
+            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            images.append(img)
+    except Exception:
+        pass
+    return images
+
+def analisar_texto_pdf(texto):
+    blob = TextBlob(texto)
+    sentimento = blob.sentiment
+    doc = nlp(texto)
+    entidades = [(ent.text, ent.label_) for ent in doc.ents]
+    resumo = (
+        f"🧠 Análise concluída pela Nexa:\n"
+        f"- 📊 Polaridade: {sentimento.polarity:.2f} | Subjetividade: {sentimento.subjectivity:.2f}\n"
+        f"- 🏷️ Entidades encontradas: {', '.join([f'{ent[0]} ({ent[1]})' for ent in entidades[:5]]) or 'nenhuma'}\n"
+        f"\nResumo prévio:\n{texto[:1000]}"
+    )
+    return resumo
+
+#========== HANDLERS ==========
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Olá! Eu sou a Nexa. Envie um PDF, faça uma pergunta ou use /buscar <termo>.\n"
+        "Use /comparar X vs Y para comparar."
+    )
+
+async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.message.from_user.id
+    user_msg = update.message.text
+    await update.message.reply_text("📥 Processando...")
+
+    resposta = chamar_llama_openrouter(user_id, user_msg)
+
+    for i in range(0, len(resposta), 4096):
+        await update.message.reply_text(resposta[i:i+4096])
+
+async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.message.from_user.id
+    documento: Document = update.message.document
+    await update.message.reply_text("📑 Analisando PDF...")
+
+    file = await context.bot.get_file(documento.file_id)
+    pdf_bytes = await file.download_as_bytearray()
+    hash_arquivo = hashlib.sha256(pdf_bytes).hexdigest()
+
+    filename = documento.file_name or f"arquivo_{hash_arquivo[:8]}.pdf"
+    filepath = os.path.join(dl_path, filename)
+    with open(filepath, "wb") as f:
+        f.write(pdf_bytes)
+
+    if hash_arquivo in cache_pdf:
+        await update.message.reply_text("♻️ Análise em cache...")
+        resultado = cache_pdf[hash_arquivo]
+    else:
+        texto_extraido = ""
+        try:
+            reader = PdfReader(BytesIO(pdf_bytes))
+            for page in reader.pages:
+                texto_extraido += page.extract_text() or ""
+
+            if not texto_extraido.strip():
+                await update.message.reply_text("🔍 OCR iniciado...")
+                images = convert_pdf_to_images(pdf_bytes)
+                for img in images:
+                    texto_extraido += pytesseract.image_to_string(img)
+
+            if texto_extraido.strip():
+                resumo = analisar_texto_pdf(texto_extraido)
+                resposta = chamar_llama_openrouter(user_id, resumo)
+                resultado = resposta
+                cache_pdf[hash_arquivo] = resultado
+            else:
+                resultado = "❌ Não foi possível extrair texto do PDF."
+        except Exception as e:
+            resultado = f"Erro ao processar PDF: {e}"
+
+    for i in range(0, len(resultado), 4096):
+        await update.message.reply_text(resultado[i:i+4096])
+
+async def buscar(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.message.from_user.id
+    termo = " ".join(context.args).strip()
+    if not termo:
+        await update.message.reply_text("Use assim: /buscar Neymar")
+        return
+
+    await update.message.reply_text(f"🔎 Buscando: {termo}")
+    wiki = buscar_wikipedia(termo)
+    google = buscar_google_simples(termo)
+    texto = ""
+    if wiki:
+        texto += f"Wikipedia:\n{wiki}\n\n"
+    if google:
+        texto += f"Google:\n{google}"
+    if not texto:
+        await update.message.reply_text("❌ Nada encontrado.")
+        return
+
+    prompt = f"Resuma e explique o seguinte em português claro:\n\n{texto[:3800]}"
+    resposta = chamar_llama_openrouter(user_id, prompt)
+    for i in range(0, len(resposta), 4096):
+        await update.message.reply_text(resposta[i:i+4096])
+
+async def comparar(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.message.from_user.id
+    entrada = " ".join(context.args).strip()
+    if " vs " not in entrada.lower():
+        await update.message.reply_text("Use: /comparar Python vs Java")
+        return
+
+    termo1, termo2 = [t.strip() for t in entrada.split(" vs ", 1)]
+    wiki1 = buscar_wikipedia(termo1) or "Não achei nada para o primeiro termo."
+    wiki2 = buscar_wikipedia(termo2) or "Não achei nada para o segundo termo."
+
+    prompt = f"Compare '{termo1}' com '{termo2}' com base nos textos:\n\n{wiki1[:1800]}\n\n{wiki2[:1800]}"
+    resposta = chamar_llama_openrouter(user_id, prompt)
+    for i in range(0, len(resposta), 4096):
+        await update.message.reply_text(resposta[i:i+4096])
+
+#========== MAIN ==========
+import asyncio
+
+async def rodar_bot():
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("buscar", buscar))
+    app.add_handler(CommandHandler("comparar", comparar))
+    app.add_handler(MessageHandler(filters.Document.ALL & ~filters.VIDEO, handle_pdf))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
+
+    print("Bot rodando...")
+    await app.initialize()
+    await app.start()
+    await app.updater.start_polling()
+
+#========== EXECUTAR ==========
+await rodar_bot()
